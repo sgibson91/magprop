@@ -15,20 +15,43 @@ tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
 
 
 # Calculate initial conditions to pass to odeint
-def init_conds(arr):
-    # ODEint initial conditions
-    Mdisc0 = arr[1] * Msol                     # Disc mass
-    omega0 = (2.0 * np.pi) / (1.e-3 * arr[0])  # Angular frequency
-    y0 = [Mdisc0, omega0]
-    return y0
+def init_conds(MdiscI, P):
+    """
+Function to convert a disc mass from solar masses to grams and an initial spin
+period in milliseconds into an angular frequency.
+
+    :param MdiscI: disc mass - solar masses
+    :param P: initial spin period - milliseconds
+    :return: an array containing the disc mass in grams and the angular freq.
+    """
+    Mdisc0 = MdiscI * Msol                 # Disc mass
+    omega0 = (2.0 * np.pi) / (1.0e-3 * P)  # Angular frequency
+
+    return np.array([Mdisc0, omega0])
 
 
 # Model to be passed to odeint to calculate Mdisc and omega
-def ODEs(y, t, B, MdiscI, RdiscI, epsilon, delta, n, alpha, cs7, k):
+def odes(y, t, B, MdiscI, RdiscI, epsilon, delta, n, alpha, cs7, k):
+    """
+Function to be passed to ODEINT to calculate the disc mass and angular frequency
+over time.
 
+    :param y: output from init_conds
+    :param t: time points to solve equations for
+    :param B: magnetic field strength - 10^15 G
+    :param MdiscI: initial disc mass - solar masses
+    :param RdiscI: disc radius - km
+    :param epsilon: timescale ratio
+    :param delta: mass ratio
+    :param n: propeller "switch-on"
+    :param alpha: sound speed prescription
+    :param cs7: sound speed in disc - 10^7 cm/s
+    :param k: capping fraction
+    :return: time derivatives of disc mass and angular frequency to be integrated
+             by ODEINT
+    """
     # Initial conditions
-    Mdisc = y[0]
-    omega = y[1]
+    Mdisc, omega = y
 
     # Constants
     Rdisc = RdiscI * 1.0e5                 # Disc radius
@@ -75,45 +98,47 @@ def ODEs(y, t, B, MdiscI, RdiscI, epsilon, delta, n, alpha, cs7, k):
 
     omegadot = (Nacc + Ndip) / I  # Angular frequency time derivative
 
-    return Mdotdisc, omegadot
+    return np.array([Mdotdisc, omegadot])
 
-B = 1.0
-P = 1.0
-Md = 0.1
-Rd = 100.0
-eps = 1.0
-delt = 1.0e-6
-n = [1.0, 10.0, 50.0]
-lines = [':', '--', '-']
-alpha = 0.1
-cs7 = 1.0
-k = 0.9
 
-y0 = init_conds([P, Md])
+# Variable set- up
+B = 1.0         # Magnetic field strength - 10^15 G
+P = 1.0         # Initial spin period - milliseconds
+MdiscI = 0.1    # Disc mass - solar masses
+RdiscI = 100.0  # Disc radius - km
+epsilon = 1.0   # Timescale ratio
+delta = 1.0e-6  # Mass ratio
+alpha = 0.1     # Sound speed prescription
+cs7 = 1.0       # Sound speed in disc - 10^7 cm/s
+k = 0.9         # Capping fraction
 
-mu = 1.e15 * B * (R ** 3.0)
-Rdisc = Rd * 1.0e5
-tvisc = Rdisc / (alpha * cs7 * 1.0e7)
+y0 = init_conds(MdiscI, P)  # Calculate initial conditions
 
-for z in range(len(n)):
-    pars = [B, P, Md, Rd, eps, delt, n[z]]
-    soln = odeint(ODEs, y0, tarr, args=(B, Md, Rd, eps, delt, n[z], alpha, cs7,
-                  k))
+mu = 1.0e15 * B * (R ** 3.0)           # Magnetic dipole moment
+Rdisc = RdiscI * 1.0e5                 # Disc radius - cm
+tvisc = Rdisc / (alpha * cs7 * 1.0e7)  # Viscous timescale
 
-    Mdisc = soln[:,0]
-    omega = soln[:,1]
+n_vals = [1.0, 10.0, 50.0]  # Propeller "switch-on" values
+lines = [':', '--', '-']    # Linestyles for plotting
+
+for n, ln in zip(n_vals, lines):
+    pars = [B, P, MdiscI, RdiscI, epsilon, delta, n]
+    soln = odeint(odes, y0, tarr, args=(B, MdiscI, RdiscI, epsilon, delta, n,
+                  alpha, cs7, k))
+
+    Mdisc = np.array(soln[:, 0])
+    omega = np.array(soln[:, 1])
 
     Rm = ((mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * (((3.0 * Mdisc) / tvisc)
           ** (-2.0 / 7.0)))
     Rc = (GM / (omega ** 2.0)) ** (1.0 / 3.0)
     Rlc = c / omega
-    inRm = Rm >= (0.9 * Rlc)
-    Rm = np.where(inRm, (0.9 * Rlc), Rm)
+    Rm = np.where(Rm >= (0.9 * Rlc), (0.9 * Rlc), Rm)
 
     w = np.sort((Rm / Rc) ** (3.0 / 2.0))
-    eta2 = 0.5 * (1.0 + np.tanh(n[z] * (w - 1.0)))
+    eta2 = 0.5 * (1.0 + np.tanh(n * (w - 1.0)))
 
-    plt.plot(w, eta2, c='k', ls=lines[z])
+    plt.plot(w, eta2, c='k', ls=ln)
 
 plt.xlim(0.8, 1.2)
 plt.ylim(-0.1, 1.1)
@@ -122,4 +147,4 @@ plt.tick_params(axis='both', which='major', labelsize=10)
 plt.xlabel('Fastness Parameter, $\Omega$', fontsize=12)
 plt.ylabel('Propeller Efficiency, $\eta_2$', fontsize=12)
 plt.tight_layout()
-plt.savefig('tanh.png', dpi=720)
+plt.savefig('tanh.png')
