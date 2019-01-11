@@ -1,7 +1,13 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 
+
+# Check if sub-directory 'plots' exists - if not, create it
+directory = os.path.join(os.getcwd(), "plots")
+if not os.path.exists(directory):
+    os.mkdir(directory)
 
 # Global constants
 G = 6.674e-8                      # Gravitational constant (cgs)
@@ -147,4 +153,4 @@ plt.tick_params(axis='both', which='major', labelsize=10)
 plt.xlabel('Fastness Parameter, $\Omega$', fontsize=12)
 plt.ylabel('Propeller Efficiency, $\eta_2$', fontsize=12)
 plt.tight_layout()
-plt.savefig('tanh.png')
+plt.savefig(os.path.join(directory, "figure1.png"))
