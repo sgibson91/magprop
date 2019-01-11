@@ -21,7 +21,7 @@ python code/<script_name>.py
 ```
 SHIFT-RETURN executes the command.
 
-It is recommended that you run all the scripts from the root of the repo.
+It is recommended that you run all the scripts from the root of the repo (i.e. do not `cd code | python <script_name>.py`).
 
 Figures will be saved to the sub-directory `plots/`.
 
