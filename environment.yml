@@ -10,7 +10,7 @@ dependencies:
   - scipy=0.18.1
   - matplotlib=2.0.0
   - corner
-  - emcee
+  - emcee=2.0.0
   - pip:
     - twine
     - git+https://github.com/sgibson91/magnetar-propeller/
