@@ -13,6 +13,7 @@ You may wish to right-click the badge and select "Open Link in New Tab" (or whic
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/fig1-script/?urlpath=lab)
 
 From the menu, select a Python 2 Console.
+(The second icon on the second row down.)
 
 To run a script, type the following:
 ```
