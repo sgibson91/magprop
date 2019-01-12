@@ -129,7 +129,7 @@ colours = ['r', 'r', 'g', 'g']      # For plotting
 linestyle = ['-', '--', '-', '--']  # For plotting
 
 # Initialise plots
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True, figsize=(4,5))
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 ax3.axhline(1.0, ls='--', c='k')
 
 # Loop over constants
