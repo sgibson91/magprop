@@ -1,8 +1,15 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import MaxNLocator
+
+
+# Check if sub-directory 'plots' exists - if not, create it
+directory = os.path.join(os.getcwd(), "plots")
+if not os.path.exists(directory):
+    os.mkdir(directory)
 
 
 # Global variables
@@ -336,4 +343,4 @@ ax4.set_title("(d)", fontsize=10)
 fig.text(0.5, 0.0, 'Time (s)', fontsize=12, ha='center')
 
 fig.tight_layout()
-fig.savefig('compare.png')
+fig.savefig(os.path.join(directory, "figure3.png"))
