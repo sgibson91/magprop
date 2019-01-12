@@ -2,7 +2,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
-from matplotlib.patches import Rectangle
 from matplotlib.ticker import MaxNLocator
 
 
@@ -291,7 +290,6 @@ b_Ltot = b_Lprop + b_Ldip
 # === Plotting === #
 
 fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(7.5, 7))
-leg1 = Rectangle((0, 0), 0, 0, alpha=0.0)
 
 ax1.semilogx(tarr, po_omega, c='k')
 ax1.semilogx(tarr, b_omega, c='k', ls='--')
