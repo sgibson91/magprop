@@ -1,7 +1,14 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from matplotlib.ticker import MaxNLocator
+
+
+# Check if sub-directory 'plots' exists - if not, create it
+directory = os.path.join(os.getcwd(), "plots")
+if not os.path.exists(directory):
+    os.mkdir(directory)
 
 
 # Global constants
@@ -143,9 +150,6 @@ for z, grb in enumerate(grbs):
             (R * (c ** 2.0))))))     # Binding energy
     rot_param = bigT / modW          # Rotation parameter
 
-    # Dipole torque
-    Ndip = (-1.0 * (mu ** 2.0) * (omega ** 3.0)) / (6.0 * (c ** 3.0))
-
     # Efficiencies and mass flow rates
     eta2 = 0.5 * (1.0 + np.tanh(n * (w - 1.0)))
     eta1 = 1.0 - eta2
@@ -164,11 +168,11 @@ for z, grb in enumerate(grbs):
                 Nacc[i] = ((GM * R) ** 0.5) * (Mdotacc[i] - Mdotprop[i])
 
     # Luminosities
-    Ldip = ((mu ** 2.0) * (omega ** 4.0)) / (6.0 * (c ** 3.0))  # -1.0 * Ndip * omega
+    Ldip = ((mu ** 2.0) * (omega ** 4.0)) / (6.0 * (c ** 3.0))
     Ldip = np.where(Ldip <= 0.0, 0.0, Ldip)
     Ldip = np.where(np.isfinite(Ldip), Ldip, 0.0)
 
-    Lprop = (-1.0 * Nacc * omega) - ((GM / Rm) * eta2 * (Mdisc / tvisc)) # -1.0 * Nacc * omega
+    Lprop = (-1.0 * Nacc * omega) - ((GM / Rm) * eta2 * (Mdisc / tvisc))
     Lprop = np.where(Lprop <= 0.0, 0.0, Lprop)
     Lprop = np.where(np.isfinite(Lprop), Lprop, 0.0)
 
@@ -214,4 +218,4 @@ axes[2, 0].set_yticks([1.0e-6, 1.0e-4, 1.0e-2, 1.0e0, 1.0e2])
 
 fig.tight_layout(h_pad=0.0)
 
-fig.savefig('radii.png', bbox_inches='tight')
+fig.savefig(os.path.join(directory, "figure4.png"))
