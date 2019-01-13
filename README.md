@@ -10,7 +10,7 @@ To run the scripts in this repo, first click the badge below.
 This will launch a JupyterLab environment containing the repo, via Binder.
 You may wish to right-click the badge and select "Open Link in New Tab" (or whichever variant your browser provides) so you can still refer to these notes.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master/?urlpath=lab)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/fig4-script/?urlpath=lab)
 
 From the menu, select a Python 2 Console.
 (The second icon on the second row down.)
