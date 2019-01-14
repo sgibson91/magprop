@@ -1,6 +1,13 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
+
+
+# Check if sub-directory 'plots' exists - if not, create it
+directory = os.path.join(os.getcwd(), "plots")
+if not os.path.exists(directory):
+    os.mkdir(directory)
 
 
 # Global constants
@@ -389,4 +396,4 @@ axes[1, 0].set_ylabel('Luminosity ($10^{50}$ ${\\rm erg}$ ${\\rm s}^{-1}$)',
                       fontsize=10)
 
 fig.tight_layout(h_pad=0.2, w_pad=0.1)
-fig.savefig('original_models.png')
+fig.savefig(os.path.join(directory, "figure5.png"))
