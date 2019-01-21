@@ -3,14 +3,15 @@
 
 name: magnetar-env
 channels:
-  - conda-forge
+  - defaults
 dependencies:
-  - python=2.7.13
-  - numpy=1.11.2
-  - scipy=0.18.1
-  - matplotlib=2.0.0
-  - corner
-  - emcee
-  - pip:
-    - twine
-    - git+https://github.com/sgibson91/magnetar-propeller/
+  - astropy==2.0.11
+  - corner=2.0.1=py_1001
+  - emcee=2.2.1=pyh24bf2e0_4
+  - matplotlib=2.0.0=np111py27_3
+  - numpy=1.11.2=py27_blas_openblas_202
+  - pandas==0.23.4
+  - python=2.7.13=1
+  - scipy=0.18.1=np111py27_blas_openblas_201
+  - wget==3.2
+
