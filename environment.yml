@@ -3,15 +3,65 @@
 
 name: magnetar-env
 channels:
+  - conda-forge
   - defaults
 dependencies:
-  - astropy==2.0.11
+  - backports_abc=0.5=py_1
+  - blas=1.1=openblas
+  - ca-certificates=2018.11.29=ha4d7672_0
+  - certifi=2018.11.29=py27_1000
   - corner=2.0.1=py_1001
+  - cycler=0.10.0=py_1
   - emcee=2.2.1=pyh24bf2e0_4
+  - freetype=2.7=1
+  - functools32=3.2.3.2=py_3
+  - futures=3.2.0=py27_1000
+  - libgfortran=3.0.0=1001
+  - libpng=1.6.36=ha92aebf_0
   - matplotlib=2.0.0=np111py27_3
+  - ncurses=5.9=10
   - numpy=1.11.2=py27_blas_openblas_202
-  - pandas==0.23.4
+  - openblas=0.2.19=2
+  - openssl=1.0.2p=h470a237_2
+  - pip=18.1=py27_1000
+  - pyparsing=2.3.0=py_0
   - python=2.7.13=1
+  - python-dateutil=2.7.5=py_0
+  - pytz=2018.9=py_0
+  - readline=6.2=0
   - scipy=0.18.1=np111py27_blas_openblas_201
-  pip:
+  - setuptools=40.6.3=py27_0
+  - singledispatch=3.4.0.3=py27_1000
+  - six=1.12.0=py27_1000
+  - sqlite=3.13.0=1
+  - subprocess32=3.5.3=py27h470a237_0
+  - tk=8.5.19=2
+  - tornado=5.1.1=py27h470a237_0
+  - wheel=0.32.3=py27_0
+  - zlib=1.2.11=h470a237_4
+  - pip:
+    - astropy==2.0.11
+    - atomicwrites==1.2.1
+    - attrs==18.2.0
+    - bleach==3.1.0
+    - chardet==3.0.4
+    - docutils==0.14
+    - funcsigs==1.0.2
+    - idna==2.8
+    - magnetar==1.0.1
+    - more-itertools==5.0.0
+    - pandas==0.23.4
+    - pkginfo==1.5.0.1
+    - pluggy==0.7.1
+    - py==1.7.0
+    - pygments==2.3.1
+    - pytest==3.6.4
+    - readme-renderer==24.0
+    - requests==2.21.0
+    - requests-toolbelt==0.8.0
+    - tqdm==4.29.0
+    - twine==1.12.1
+    - urllib3==1.24.1
+    - webencodings==0.5.1
     - wget==3.2
+
