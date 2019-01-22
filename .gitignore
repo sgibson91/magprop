@@ -103,5 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# Generated file types
-.png
+# Generated folders
+/plots
+
+# PyCharm Project files
+.idea/
