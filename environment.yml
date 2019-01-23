@@ -15,4 +15,3 @@ dependencies:
   - pip:
     - astropy==2.0.11
     - twine==1.12.1
-    - wget==3.2
