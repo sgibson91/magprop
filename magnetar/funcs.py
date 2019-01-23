@@ -219,6 +219,7 @@ parameters.
 def main(args):
     import matplotlib.pyplot as plt
 
+    # Check each "core" parameter is within a sensible range
     if not ((args.B >= 1.0e-3) & (args.B <= 10.0)):
         raise ValueError("Magnetic field strength should be between 10^-3 and \
     10 x 10^15 G")
@@ -240,16 +241,17 @@ def main(args):
     if not ((args.delt >= 1.0e-3) & (args.delt <= 1000.0)):
         raise ValueError("Delta should be between 10^-3 and 10^3")
 
+    # Construct parameter list
     pars = [args.B, args.P, args.M, args.R, args.eps, args.delt]
 
-    t, Ltot, Lprop, Ldip =  model_lc(pars)
+    # Calculate model
+    t, Ltot, Lprop, Ldip = model_lc(pars)
 
+    # Plot the model
     plt.loglog(t, Ltot, c='k')
     plt.loglog(t, Lprop, c='k', ls='--')
     plt.loglog(t, Ldip, c='k', ls=':')
     plt.show()
-
-    # if (args.dipeff is not None) & (args.dipeff >= 0.01) & (args.dipeff <= 1.0):
 
 
 if __name__ == '__main__':
@@ -273,16 +275,22 @@ if __name__ == '__main__':
     parser.add_argument("-delt", required=True, type=float,
                         help="Mass ratio (delta)")
 
-    # # Optional arguments
-    # parser.add_argument("--dipeff", help="Fractional dipole efficiency")
-    # parser.add_argument("--propeff", help="Fractional propeller efficiency")
-    # parser.add_argument("--f-beam", help="Beaming fraction")
-    #
-    # # REALLY optional arguments
-    # parser.add_argument("--n", help="Propeller 'switch-on'")
-    # parser.add_argument("--alpha", help="Sound speed prescription")
-    # parser.add_argument("--cs7", help="Sound speed - 10^7 cm/s")
-    # parser.add_argument("--k", help="Capping fraction")
+    # TODO: Only work on this if you can think of a sensible way to combine
+    # parameters without an endless nest of conditional statements
+
+    # Optional arguments
+    # parser.add_argument("--dipeff", type=float,
+    #                     help="Fractional dipole efficiency")
+    # parser.add_argument("--propeff", type=float,
+    #                     help="Fractional propeller efficiency")
+    # parser.add_argument("--f-beam", type=float, help="Beaming fraction")
+
+    # REALLY optional arguments
+    # parser.add_argument("--n", type=float, help="Propeller 'switch-on'")
+    # parser.add_argument("--alpha", type=float,
+    #                     help="Sound speed prescription")
+    # parser.add_argument("--cs7", type=float, help="Sound speed - 10^7 cm/s")
+    # parser.add_argument("--k", type=float, help="Capping fraction")
 
     args = parser.parse_args()
 
