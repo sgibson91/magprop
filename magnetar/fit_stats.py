@@ -40,7 +40,7 @@ ICIC workshop or Gelman, A. and Rubin, D. B. (1992) for details.
     :param samples: array of shape (Nc, Ns, N) that has already had burn-in
                     removed
     :param N: int number of fitting parameters (Npars)
-    :param Nc: int number of chain (Nwalk)
+    :param Nc: int number of chains (Nwalk)
     :param Ns: int number of MC steps (Nstep)
     :return: array of convergence ratios for each parameter
     """
