@@ -108,3 +108,6 @@ venv.bak/
 
  # PyCharm Project files
 .idea/
+
+# Egg info
+*.egg-info/
