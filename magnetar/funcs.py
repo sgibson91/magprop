@@ -19,7 +19,6 @@ Msol = 1.99e33                    # Solar mass - grams
 M = 1.4 * Msol                    # Magnetar mass - grams
 I = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of inertia
 GM = G * M
-tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
 
 
 # Calculate initial conditions to pass to odeint
@@ -111,8 +110,8 @@ over time.
 
 
 # Function that returns a model light curve
-def model_lc(pars, xdata=None, dipeff=0.05, propeff=0.4, f_beam=1.0, n=1.0,
-             alpha=0.1, cs7=1.0, k=0.9):
+def model_lc(pars, xdata=None, GRBtype=None, dipeff=0.05, propeff=0.4,
+             f_beam=1.0, n=1.0, alpha=0.1, cs7=1.0, k=0.9):
     """
 Function to calculate a model gamma-ray burst, X-ray light curve based on input
 parameters.
@@ -120,6 +119,7 @@ parameters.
     :param pars: A list or array of input parameters in order: B, P, MdiscI,
                  RdiscI, epsilon, delta
     :param xdata: Optional array of time points for GRB data
+    :param GRBtype: string indicating the GRB type
     :param dipeff: Fractional dipole energy-to-luminosity conversion efficiency
     :param propeff: Fractional propeller energy-to-luminosity conversion
                     efficiency
@@ -136,6 +136,14 @@ parameters.
         :return: an array containing tarr, Ltot, Lprop, Ldip in units of secs
                  and 10^50 erg/s
     """
+    # Select appropriate time array based on GRB type
+    if (GRBtype is not None) & (GRBtype == "S"):
+        tarr = np.logspace(-3.0, 6.0, num=10001, base=10.0)
+    elif (GRBtype is not None) & (GRBtype == "L"):
+        tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
+    elif GRBtype is None:
+        tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
+
     # Separate out parameters
     B, P, MdiscI, RdiscI, epsilon, delta = pars
 
