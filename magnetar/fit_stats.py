@@ -8,11 +8,11 @@ where nu is the number of degrees of freedom. If individual standard deviations
 (array sd) are supplied, then the chi-square error statistic is computed as the
 sum of squared errors divided by the standard deviations.
 
-    :param ydata: array containing data
-    :param ymod: array containing model
-    :param deg: float number of free parameter in the model
-    :param sd: array of uncertainties in ydata
-    :return: float number the (reduced) chi-square
+    :param ydata: array containing data (float)
+    :param ymod: array containing model (float)
+    :param deg: number of free parameter in the model (int)
+    :param sd: array of uncertainties in ydata (float)
+    :return: (reduced) chi-square statistic (float)
     """
     # Chi-Square statistic
     if sd is not None:
@@ -71,3 +71,31 @@ ICIC workshop or Gelman, A. and Rubin, D. B. (1992) for details.
                     sigma2_mean[i])) / sigma2_chain[i])                    # (6)
 
     return ratio
+
+
+def aicc(ydata, ymod, yerr, Npars):
+    """
+Function to calculate the corrected Akaike Information Criterion.
+
+ydata, ymod and yerr must all be of the same length.
+
+    :param ydata: list or array of y data points (float)
+    :param ymod: list or array of y model points (float)
+    :param yerr: list or array of errors on ydata (float)
+    :param Npars: number of fitting parameters (int)
+    :return:
+    """
+
+    cond1 = ydata.size == ymod.size
+    cond2 = ydata.size == yerr.size
+    cond3 = ymod.size == yerr.size
+    if (not cond1) or (not cond2) or (not cond3):
+        raise ValueError("ydata, ymod and yerr should all be the same length")
+
+    from mcmc_eqns import lnlike
+
+    a = 2.0 * lnlike(ydata, ymod, yerr)
+    b = 2.0 * Npars
+    c = ((2.0 * Npars) * (Npars + 1.0)) / (ydata.size - Npars - 1.0)
+
+    return a + b + c
