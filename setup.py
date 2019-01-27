@@ -27,13 +27,11 @@ VERSION = None
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'numpy', 'scipy'
+    'numpy', 'scipy', 'pandas'
 ]
 
 # What packages are optional?
-EXTRAS = {
-    'pandas'
-}
+EXTRAS = {}
 
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
