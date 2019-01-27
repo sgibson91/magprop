@@ -1,3 +1,3 @@
-from .funcs import model_lc
+from .funcs import *
 from .fit_stats import *
-from .mcmc_eqns import lnlike, lnprob
+from .mcmc_eqns import *
