@@ -6,6 +6,18 @@ import pandas as pd
 from astropy.cosmology import WMAP9 as cosmo
 
 
+def geomean(list_a, list_b):
+    """
+Function to calculate the geometric mean of pairs of numbers.
+
+    :param list_a: list or array of positive uncertainties
+    :param list_b: list or array of negative uncertainties
+    :return: list or array of the geometric mean of the pairs of numbers between
+             list_a and list_b
+    """
+    return [np.sum([i, np.abs(j)]) ** 0.5 for i, j in zip(list_a, list_b)]
+
+
 def k_correction(df, gamma, sigma, z, dl_cm):
     """
 Function to perform a k-correction according to Bloom, Frail & Sari (2001).
@@ -102,6 +114,10 @@ def main(args):
         k_data = k_correction(data, kcorr_df["Gamma"][grb],
                               kcorr_df["sigma"][grb], kcorr_df["z"][grb],
                               kcorr_df["dl_cm"][grb])
+
+        # Calculate geometric mean of asymmetric errors and add to data frame
+        k_data["Lum50err"] = geomean(k_data["Lum50pos"].values,
+                                     k_data["Lum50neg"].values)
 
         if args.verbose:
             print "* Writing to output file..."
