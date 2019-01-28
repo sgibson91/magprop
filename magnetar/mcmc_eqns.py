@@ -9,12 +9,14 @@ Function to calculate the log-likelihood of a model given input data based on
 the chi square goodness-of-fit statstic.
 
     :param pars: list or array of fitting parameters (float)
-    :param data: list or array of the observed data (float)
+    :param data: dataframe of observed GRB (pandas.DataFrame)
     :param type: string indicating the GRB type (str)
     :return: log-likelihood value (float)
     """
     # Separate data
-    x, y, yerr = data
+    x = data["t"]
+    y = data["Lum50"]
+    yerr = data["Lum50err"]
 
     # Calculate the model
     if len(pars) == 6:
@@ -49,7 +51,7 @@ A CSV file of custom limits can be passed via the custom_lims argument.
     """
     # Import limits
     if custom_lims is None:
-        lims = pd.read_csv("mcmc_limits.csv", index_col="pars")
+        lims = pd.read_csv("magnetar/mcmc_limits.csv", index_col="pars")
     else:
         lims = pd.read_csv(custom_lims, index_col="pars")
 
@@ -69,7 +71,7 @@ Calculate the log-probability of the model given input parameters and observed
 data.
 
     :param pars: list or array of input parameters (float)
-    :param data: list or array of observed data (float)
+    :param data: dataframe of observed GRB (pandas.DataFrame)
     :param type: string indicating the GRB type (str)
     :param custom_lims: path to a CSV file containing custom parameter limits
     :return: the log-probability value of the model compared to the data (float)
