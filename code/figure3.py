@@ -252,7 +252,7 @@ b_Rm = ((mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * (((3.0 * b_Mdisc) / tvisc)
 b_Rc = (GM / (b_omega ** 2.0)) ** (1.0 / 3.0)
 b_Rlc = c / b_omega
 
-b_Rm = np.where(b_Rm >= (k * b_Rlc), k*b_Rlc, b_Rm)
+b_Rm = np.where(b_Rm >= (k * b_Rlc), (k * b_Rlc), b_Rm)
 
 b_w = (b_Rm / b_Rc) ** (3.0 / 2.0)
 b_bigT = 0.5 * I * (b_omega ** 2.0)
@@ -323,6 +323,7 @@ ax3.set_ylim(1.0e-8, 1.0e0)
 ax3.set_xticks([1.0e0, 1.0e2, 1.0e4, 1.0e6])
 ax3.set_yticks([1.0e-6, 1.0e-4, 1.0e-2, 1.0e0])
 ax3.tick_params(axis='both', which='major', labelsize=10)
+ax3.set_xlabel('Time (s)', fontsize=12)
 ax3.set_ylabel('Dipole Luminosity ($10^{50}$ ${\\rm erg}$ ${\\rm s}^{-1}$)',
                fontsize=12)
 ax3.set_title("(c)", fontsize=10)
@@ -334,11 +335,10 @@ ax4.set_ylim(1.0e-8, 1.0e0)
 ax4.set_xticks([1.0e0, 1.0e2, 1.0e4, 1.0e6])
 ax4.set_yticks([1.0e-6, 1.0e-4, 1.0e-2, 1.0e0])
 ax4.tick_params(axis='both', which='major', labelsize=10)
+ax4.set_xlabel('Time (s)', fontsize=12)
 ax4.set_ylabel('Total Luminosity ($10^{50}$ ${\\rm erg}$ ${\\rm s}^{-1}$)',
                fontsize=12)
 ax4.set_title("(d)", fontsize=10)
-
-fig.text(0.5, 0.0, 'Time (s)', fontsize=12, ha='center')
 
 fig.tight_layout()
 fig.savefig(os.path.join(directory, "figure3.png"))
