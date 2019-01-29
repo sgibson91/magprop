@@ -56,8 +56,23 @@ A CSV file of custom limits can be passed via the custom_lims argument.
         lims = pd.read_csv(custom_lims, index_col="pars")
 
     # Determine if parameters are within the prescribed limits
-    cond_lo = np.all(pars >= lims["lower"].values[:len(pars)])
-    cond_hi = np.all(pars <= lims["upper"].values[:len(pars)])
+    # Special handling for Npars == 7 case
+    if len(pars) == 7:
+        seven_lims_lo = np.zeros_like(pars)
+        seven_lims_hi = np.zeros_like(pars)
+
+        seven_lims_lo[:6] = lims["lower"].values[:6]
+        seven_lims_lo[-1] = lims["lower"].values[-1]
+
+        seven_lims_hi[:6] = lims["upper"].values[:6]
+        seven_lims_hi[-1] = lims["upper"].values[-1]
+
+        cond_lo = np.all(pars >= seven_lims_lo)
+        cond_hi = np.all(pars <= seven_lims_hi)
+
+    else:
+        cond_lo = np.all(pars >= lims["lower"].values[:len(pars)])
+        cond_hi = np.all(pars <= lims["upper"].values[:len(pars)])
 
     if (not cond_lo) or (not cond_hi):
         return -np.inf
@@ -69,6 +84,9 @@ def lnprob(pars, data, type, custom_lims=None):
     """
 Calculate the log-probability of the model given input parameters and observed
 data.
+
+Calculate log-prior first so that computational time is not wasted calculating
+models that do not fulfill the prior requirement.
 
     :param pars: list or array of input parameters (float)
     :param data: dataframe of observed GRB (pandas.DataFrame)
