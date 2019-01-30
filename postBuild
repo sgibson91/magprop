@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source activate kernel
+python postBuild.py
