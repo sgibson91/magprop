@@ -15,7 +15,7 @@ Function to calculate the geometric mean of pairs of numbers.
     :return: list or array of the geometric mean of the pairs of numbers between
              list_a and list_b
     """
-    return [np.sum([i, np.abs(j)]) ** 0.5 for i, j in zip(list_a, list_b)]
+    return [np.prod([i, np.abs(j)]) ** 0.5 for i, j in zip(list_a, list_b)]
 
 
 def k_correction(df, gamma, sigma, z, dl_cm):
