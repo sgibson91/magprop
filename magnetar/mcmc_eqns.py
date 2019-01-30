@@ -80,7 +80,7 @@ A CSV file of custom limits can be passed via the custom_lims argument.
         return 0.0
 
 
-def lnprob(pars, data, type, custom_lims=None):
+def lnprob(pars, data, GRBtype, custom_lims=None):
     """
 Calculate the log-probability of the model given input parameters and observed
 data.
@@ -90,7 +90,7 @@ models that do not fulfill the prior requirement.
 
     :param pars: list or array of input parameters (float)
     :param data: dataframe of observed GRB (pandas.DataFrame)
-    :param type: string indicating the GRB type (str)
+    :param GRBtype: string indicating the GRB type (str)
     :param custom_lims: path to a CSV file containing custom parameter limits
     :return: the log-probability value of the model compared to the data (float)
     """
@@ -105,7 +105,7 @@ models that do not fulfill the prior requirement.
         return -np.inf
 
     # Calculate log-likelihood
-    ll = lnlike(pars, data, type)
+    ll = lnlike(pars, data, GRBtype)
 
     # Determine if log-likelihood is finite
     if not np.isfinite(ll):

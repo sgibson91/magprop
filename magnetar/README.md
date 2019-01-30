@@ -122,3 +122,75 @@ This function calculates the convergence of a set of Monte Carlo Markov chains.
 * `ratios` - an array of convergence ratios for each fitting parameter
 
 Chains are considered to have converged when the ratios `~1`
+
+### `aicc`
+
+Function to calculate the corrected Akaike Information Criterion.
+
+**Input variables:**
+* `ydata` - list or array of observed `y`-data (float)
+* `ymod` - list or array of modelled `y`-data (float)
+* `yerr` - list or array of uncertainties on `ydata` (float)
+* `Npars` - number of free parameters (integer)
+
+**Output variables:**
+* `aicc` - AICc goodness-of-fit statistic (float)
+
+## `mcmc_eqns.py`
+
+This script contains a suite of functions used for Bayesian Inference.
+
+### `lnlike`
+
+This function calculates the log-likelihood probability of a model given input data, based on the chi-square goodness-of fit statistic.
+
+**Input variables:**
+* `pars` - list or array of the input parameters to calculate the model
+* `data` - `pandas.DataFrame` of the observed GRB data
+* `GRBtype` - string object indentifying the GRB as short (`S`) or long (`L`)
+
+**Output variables:**
+* `lnlike` - the float log-likelihood of the model
+
+### `lnprior`
+
+This function calculates the log-prior probability.
+It has the form of a "Top Hat" distribution, i.e. uniform distribution between two boundaries, and infinite outside these boundaries.
+
+**Input variables:**
+* `pars` - list or array of the fitting parameters
+
+**Optional variables:**
+* `custom_lims` - file path to a CSV containing custom parameter limits
+
+**Output variables:**
+* `lnprior` - the log-prior of the parameters
+
+### `lnprob`
+
+This function calculates the posterior probability of the model given the data by summing the log-likelihood and log-prior functions.
+The function tests the log-prior function first.
+If this returns an infinite value, then the posterior also returns infinity and computational time is not wasted on calculating a model that doesn't fit the prior.
+
+**Input variables:**
+* `pars` - list or array of model parameters, to be parsed to `lnlike` and `lnprior`
+* `data` - data frame containing the observed GRB data, to be parsed to `lnlike`
+* `GRBtype` - string indicating the type of GRB, to be parsed to `lnlike` 
+
+**Optional variables:**
+* `custom_lims` - file path to CSV containing custom parameter limits, to be parsed to `lnprior`
+
+**Output variables:**
+* `lnprob` - the log-posterior value of the model given the data
+
+### `mcmc_limits.csv`
+
+A CSV file containing the default parameter limits for the fitting parameters.
+
+The first column has the heading `pars` and contains the string representations of the fitting parameters `B`, `P`, `MdiscI`, `RdiscI`, `epsilon`, `delta`, `dipeff`, `propeff`, `f_beam`.
+
+The second column has the heading `lower` and contains the float numbers of the lower limits of the parameters.
+
+The third column has the heading `upper` and contains the float numbers of the upper limits of the parameters.
+
+Any custom parameter limit file should follow this format. 
