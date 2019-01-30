@@ -15,4 +15,4 @@ dependencies:
   - pip:
     - astropy==2.0.11
     - twine==1.12.1
-    - pytest==4.0.0
+    - pytest==4.1.1
