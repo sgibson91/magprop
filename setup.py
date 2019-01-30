@@ -19,7 +19,7 @@ NAME = 'magnetar'
 DESCRIPTION = ("Suite of functions to model the emissions of a propellering "
                "magnetar being fed by fallback accretion and then optimise "
                "this for data using MCMC.")
-URL = 'https://github.com/sgibson91/magnetar-propeller'
+URL = 'https://github.com/sgibson91/magprop'
 EMAIL = 'sarah_gibson91@hotmail.co.uk'
 AUTHOR = 'Sarah L. Gibson'
 REQUIRES_PYTHON = '>=2.7'
@@ -27,12 +27,11 @@ VERSION = None
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'numpy', 'scipy'
+    'numpy', 'scipy', 'pandas'
 ]
 
 # What packages are optional?
-EXTRAS = {
-}
+EXTRAS = {}
 
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
