@@ -143,6 +143,9 @@ parameters.
         tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
     elif GRBtype is None:
         tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
+    else:
+        raise ValueError("Please provide a valid value for GRBtype.\n\
+Options are: L, S, or None.")
 
     # Separate out parameters
     B, P, MdiscI, RdiscI, epsilon, delta = pars
