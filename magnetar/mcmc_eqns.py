@@ -3,14 +3,14 @@ import pandas as pd
 from funcs import model_lc
 
 
-def lnlike(pars, data, type):
+def lnlike(pars, data, GRBtype):
     """
 Function to calculate the log-likelihood of a model given input data based on
 the chi square goodness-of-fit statstic.
 
     :param pars: list or array of fitting parameters (float)
     :param data: dataframe of observed GRB (pandas.DataFrame)
-    :param type: string indicating the GRB type (str)
+    :param GRBtype: string indicating the GRB type (str)
     :return: log-likelihood value (float)
     """
     # Separate data
@@ -20,14 +20,14 @@ the chi square goodness-of-fit statstic.
 
     # Calculate the model
     if len(pars) == 6:
-        ymod = model_lc(pars, xdata=x, GRBtype=type)
+        ymod = model_lc(pars, xdata=x, GRBtype=GRBtype)
     elif len(pars) == 7:
-        ymod = model_lc(pars[:6], xdata=x, GRBtype=type, f_beam=pars[6])
+        ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, f_beam=pars[6])
     elif len(pars) == 8:
-        ymod = model_lc(pars[:6], xdata=x, GRBtype=type, dipeff=pars[6],
+        ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
                         propeff=pars[7])
     elif len(pars) == 9:
-        ymod = model_lc(pars[:6], xdata=x, GRBtype=type, dipeff=pars[6],
+        ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
                         propeff=pars[7], f_beam=pars[8])
     else:
         pass
