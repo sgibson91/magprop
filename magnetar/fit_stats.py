@@ -16,7 +16,7 @@ sum of squared errors divided by the standard deviations.
     """
     # Chi-Square statistic
     if sd is not None:
-        chisq = np.sum(((ydata - ymod) / sd) ** 2.0)
+        chisq = np.sum(((ydata - ymod) ** 2.0) / sd)
 
     else:
         chisq = np.sum((ydata - ymod) ** 2.0)
