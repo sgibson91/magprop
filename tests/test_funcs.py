@@ -1,5 +1,6 @@
 import numpy as np
 from magnetar.funcs import init_conds
+from magnetar.fit_stats import redchisq
 
 
 def geomean(list_a, list_b):
@@ -42,3 +43,20 @@ Test function for init_conds in magnetar library.
 
     assert ((init_conds(MdiscI, P)[0] == Mdisc) &
             (init_conds(MdiscI, P)[1] == omega))
+
+
+def test_redchisq():
+    """
+Function to test the chi squared statistic calculation in fit_stats.py
+    """
+    x = np.arange(50.0)
+    ymod = 2.0 * x + 3.0
+    yerr = np.random.normal(0.75845, scale=0.25, size=len(ymod))
+
+    ydata = np.zeros_like(ymod)
+    for i in range(len(ymod)):
+        ydata[i] = ymod[i] + np.random.normal(0.0, scale=yerr[i])
+
+    chisq = np.sum(((ydata - ymod) ** 2.0) / yerr)
+
+    assert redchisq(ydata, ymod, sd=yerr) == chisq
