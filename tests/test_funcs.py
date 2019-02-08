@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.integrate import odeint
-from magnetar.funcs import init_conds
+from magnetar.funcs import init_conds, odes
 from magnetar.fit_stats import redchisq
 
 
@@ -19,6 +19,27 @@ Test function for init_conds in magnetar library.
 
     assert ((init_conds(MdiscI, P)[0] == Mdisc) &
             (init_conds(MdiscI, P)[1] == omega))
+
+
+def test_odes_integrated_by_odeint():
+
+    expected_data = pd.read_csv("tests/test_data/odes_integrated_by_odeint.csv",
+                                index_col=False)
+    t = expected_data["t"]
+
+    MdiscI = 0.001
+    y0 = [MdiscI * 1.99e33, (2.0 * np.pi) / (1.0e-3 * 1.0)]
+    B = 1.0
+    RdiscI = 100.0
+    epsilon = 1.0
+    delta = 10.0
+
+    soln = odeint(odes, y0, t, args=(B, MdiscI, RdiscI, epsilon, delta))
+    Mdisc = soln[:, 0]
+    omega = soln[:, 1]
+
+    assert (np.isclose(Mdisc, expected_data["Mdisc"]).all() &
+            np.isclose(omega, expected_data["omega"]).all())
 
 
 def test_redchisq():
