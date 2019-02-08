@@ -27,11 +27,8 @@ Function to test the chi squared statistic calculation in fit_stats.py
     """
     x = np.arange(50.0)
     ymod = 2.0 * x + 3.0
-    yerr = np.random.normal(0.75845, scale=0.25, size=len(ymod))
-
-    ydata = np.zeros_like(ymod)
-    for i in range(len(ymod)):
-        ydata[i] = ymod[i] + np.random.normal(0.0, scale=yerr[i])
+    yerr = np.random.normal(0.0, scale=0.05, size=len(ymod))
+    ydata = ymod + yerr
 
     chisq = np.sum(((ydata - ymod) ** 2.0) / yerr)
 
