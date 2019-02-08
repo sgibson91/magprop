@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+from scipy.integrate import odeint
 from magnetar.funcs import init_conds
 from magnetar.fit_stats import redchisq
 
@@ -34,3 +36,80 @@ Function to test the chi squared statistic calculation in fit_stats.py
     chisq = np.sum(((ydata - ymod) ** 2.0) / yerr)
 
     assert redchisq(ydata, ymod, sd=yerr) == chisq
+
+
+def dy_dx(y, x):
+    # Define a function which calculates the derivative
+    return x - y
+
+
+def test_first_order_odeint():
+    """
+Function to test the integration of a simple first order Ordinary Differential
+Equation with ODEINT is consistent.
+    """
+    expected_data = pd.read_csv("tests/test_data/first_order_ode.csv")
+    xs = expected_data["xs"]
+    y0 = 1.0
+
+    ys = odeint(dy_dx, y0, xs)
+    ys = np.array(ys).flatten()
+
+    assert np.isclose(ys, expected_data["ys"].values).all()
+
+
+def dU_dx(U, x):
+    """
+U is a vector such that y=U[0] and z=U[1]. This function should return [y', z'].
+z is the substitution z==y'
+    """
+    return [U[1], -2*U[1] - 2*U[0] + np.cos(2*x)]
+
+
+def test_damped_harmonic_oscillator_ode():
+    """
+Function to test that a set of second order ordinary differential equations are
+consistently integrated by ODEINT.
+
+y'' + 2y' + 2y = cos(2x), y(0)=0, y'(0)=0
+Use substition z==y':
+z' + 2z + 2y = cos(2x), z(0)=y(0)=0
+    """
+    expected_data = pd.read_csv("tests/test_data/damped_harmonic_oscillator.csv")
+    xs = expected_data["xs"]
+    U0 = [0, 0]
+
+    Us = odeint(dU_dx, U0, xs)
+    ys = Us[:, 0]
+
+    assert np.isclose(ys, expected_data["ys"].values).all()
+
+
+def dP_dt(P, t, a=1.0, b=1.0, c=1.0, d=1.0):
+    """
+AKA Lotka-Volterra equations: pair of first order, non-linear ordinary
+    differential equations representing a simplified model of the change in
+    populations of two species which interact via predation.
+
+dx/dt = x*(a - b*y); dy/dt = -y*(c -d*x)
+
+a, b, c, d are parameters which are assumed to be positive.
+    """
+    return [P[0]*(a - b*P[1]), -P[1]*(c - d*P[0])]
+
+
+def test_predator_prey_ode():
+    """
+Function to test that the predator-prey set of ordinary differential equations
+integrated by ODEINT are consistent.
+    """
+    expected_data = pd.read_csv("tests/test_data/predator_vs_prey.csv")
+    ts = expected_data["ts"]
+    P0 = [1.5, 1.0]
+
+    Ps = odeint(dP_dt, P0, ts)
+    prey = Ps[:, 0]
+    predator = Ps[:, 1]
+
+    assert ((np.isclose(prey, expected_data["prey"]).all()) &
+            (np.isclose(predator, expected_data["predators"]).all()))
