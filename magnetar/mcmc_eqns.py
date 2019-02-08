@@ -3,22 +3,6 @@ import pandas as pd
 from funcs import model_lc
 
 
-class ValueError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class FileError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
 def lnlike(pars, data, GRBtype):
     """
 Function to calculate the log-likelihood of a model given input data based on
@@ -72,8 +56,8 @@ A CSV file of custom limits can be passed via the custom_lims argument.
     else:
         try:
             lims = pd.read_csv(custom_lims, index_col="pars")
-        except:
-            raise FileError("Please provide a valid file path.")
+        except ValueError:
+            raise ValueError("Please provide a valid file path.")
 
     # Determine if parameters are within the prescribed limits
     # Special handling for Npars == 7 case
