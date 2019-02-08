@@ -5,6 +5,11 @@ from magnetar.funcs import init_conds, odes
 from magnetar.fit_stats import redchisq
 
 
+################################################################################
+# Tests for functions in magnetar/funcs.py                                     #
+################################################################################
+
+
 def test_init_conds():
     """
 Test function for init_conds in magnetar library.
@@ -22,7 +27,9 @@ Test function for init_conds in magnetar library.
 
 
 def test_odes_integrated_by_odeint():
-
+    """
+Function to test that odes is consistently being integrated by ODEINT.
+    """
     expected_data = pd.read_csv("tests/test_data/odes_integrated_by_odeint.csv",
                                 index_col=False)
     t = expected_data["t"]
@@ -42,18 +49,9 @@ def test_odes_integrated_by_odeint():
             np.isclose(omega, expected_data["omega"]).all())
 
 
-def test_redchisq():
-    """
-Function to test the chi squared statistic calculation in fit_stats.py
-    """
-    x = np.arange(50.0)
-    ymod = 2.0 * x + 3.0
-    yerr = np.random.normal(0.0, scale=0.05, size=len(ymod))
-    ydata = ymod + yerr
-
-    chisq = np.sum(((ydata - ymod) ** 2.0) / yerr)
-
-    assert redchisq(ydata, ymod, sd=yerr) == chisq
+################################################################################
+# Integration validation tests for ODEINT                                      #
+################################################################################
 
 
 def dy_dx(y, x):
@@ -100,7 +98,7 @@ z' + 2z + 2y = cos(2x), z(0)=y(0)=0
     Us = odeint(dU_dx, U0, xs)
     ys = Us[:, 0]
 
-    assert np.isclose(ys, expected_data["ys"].values).all()
+    assert np.isclose(ys, expected_data["ys"]).all()
 
 
 def dP_dt(P, t, a=1.0, b=1.0, c=1.0, d=1.0):
@@ -131,3 +129,22 @@ integrated by ODEINT are consistent.
 
     assert ((np.isclose(prey, expected_data["prey"]).all()) &
             (np.isclose(predator, expected_data["predators"]).all()))
+
+
+################################################################################
+# Tests for functions in magnetar/fit_stats.py                                 #
+################################################################################
+
+
+def test_redchisq():
+    """
+Function to test the chi squared statistic calculation in fit_stats.py
+    """
+    x = np.arange(50.0)
+    ymod = 2.0 * x + 3.0
+    yerr = np.random.normal(0.0, scale=0.05, size=len(ymod))
+    ydata = ymod + yerr
+
+    chisq = np.sum(((ydata - ymod) ** 2.0) / yerr)
+
+    assert redchisq(ydata, ymod, sd=yerr) == chisq
