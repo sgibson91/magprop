@@ -35,6 +35,17 @@ It is recommended that you run all the scripts from the root of the repo (i.e. d
 * **kcorr.py:** Performs a k-correction on a GRB dataset.
   Takes command line argument `-t S` for the short GRB sample.
 
+## Running Tests
+
+To run tests after launching the Binder, select `terminal` from the launcher window in JupyterLab and execute the following commands.
+```bash
+# Activate the environment
+$ source activate kernel
+
+# Run the tests with verbose output
+$ python -m pytest -vvv
+```
+
 ## Citing this work
 
 Please quote the following citation when referring to this work.
