@@ -145,6 +145,62 @@ Function to test the chi squared statistic calculation in fit_stats.py
     yerr = np.random.normal(0.0, scale=0.05, size=len(ymod))
     ydata = ymod + yerr
 
-    chisq = np.sum(((ydata - ymod) ** 2.0) / yerr)
+    chisq = np.sum(((ydata - ymod) / yerr) ** 2.0)
 
     assert redchisq(ydata, ymod, sd=yerr) == chisq
+
+
+def lnlike(ydata, yerr, ymod):
+    """
+Function to calculate the log-likelihood assuming Gaussian statistics.
+    """
+    return -0.5 * np.sum(((ydata - ymod) / yerr) ** 2.0)
+
+
+def aicc(ydata, ymod, yerr, Npars):
+    """
+Function to calculate the corrected Akaike Information Criterion.
+
+ydata, ymod and yerr must all be of the same length.
+
+    :param ydata: list or array of y data points (float)
+    :param ymod: list or array of y model points (float)
+    :param yerr: list or array of errors on ydata (float)
+    :param Npars: number of fitting parameters (int)
+    :return:
+    """
+    cond1 = ydata.size == ymod.size
+    cond2 = ydata.size == yerr.size
+    cond3 = ymod.size == yerr.size
+
+    if (not cond1) or (not cond2) or (not cond3):
+        print "ydata.size == ymod.size:", cond1
+        print "ydata.size == yerr.size:", cond2
+        print "ymod.size == yerr.size:", cond3
+        raise ValueError("ydata, ymod and yerr should all be the same length")
+
+    a = 2.0 * lnlike(ydata, yerr, ymod)
+    b = 2.0 * Npars
+    c = ((2.0 * Npars) * (Npars + 1.0)) / (ydata.size - Npars - 1.0)
+
+    return a + b + c
+
+
+def test_akaike_info_criterion():
+    """
+Function to test the calculation of the corrected Akaike Information Criterion.
+    """
+    expected_data = pd.read_csv("tests/test_data/noisy_gaussian.csv")
+    ydata = expected_data["ydata"]
+    yerr = expected_data["yerr"]
+    ymod = expected_data["ymod"]
+    Npars = 2
+
+    a = 2.0 * -0.5 * np.sum(((ydata - ymod) / yerr) ** 2.0)
+    b = 2.0 * Npars
+    c = ((2.0 * Npars) * (Npars + 1.0)) / (ydata.size - Npars - 1.0)
+
+    expected_aicc = a + b + c
+    actual_aicc = aicc(ydata, ymod, yerr, Npars)
+
+    assert expected_aicc == actual_aicc
