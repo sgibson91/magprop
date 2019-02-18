@@ -2,7 +2,7 @@
 
 Suite of code that models fallback accretion onto a magnetar and uses Markov Chain Monte Carlo to fit this to samples of Gamma-Ray Bursts.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master/?urlpath=lab)
+[![Build Status](https://travis-ci.org/sgibson91/magprop.svg?branch=master)](https://travis-ci.org/sgibson91/magprop) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master?urlpath=lab)
 
 ## Usage
 
@@ -34,6 +34,17 @@ It is recommended that you run all the scripts from the root of the repo (i.e. d
 * **figure5.py:** Reproduces figure 5
 * **kcorr.py:** Performs a k-correction on a GRB dataset.
   Takes command line argument `-t S` for the short GRB sample.
+
+## Running Tests
+
+To run tests after launching the Binder, select `terminal` from the launcher window in JupyterLab and execute the following commands.
+```bash
+# Activate the environment
+$ source activate kernel
+
+# Run the tests with verbose output
+$ python -m pytest -vvv
+```
 
 ## Citing this work
 

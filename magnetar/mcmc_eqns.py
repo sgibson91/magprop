@@ -30,7 +30,8 @@ the chi square goodness-of-fit statstic.
         ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
                         propeff=pars[7], f_beam=pars[8])
     else:
-        pass
+        raise ValueError("len(pars) == {0} is not an accepted array length.\n\
+len(pars) must equal 6, 7, 8 or 9.".format(len(pars)))
 
     # Return the log-likelihood
     return -0.5 * np.sum(((y - ymod) / yerr) ** 2.0)
@@ -53,7 +54,10 @@ A CSV file of custom limits can be passed via the custom_lims argument.
     if custom_lims is None:
         lims = pd.read_csv("magnetar/mcmc_limits.csv", index_col="pars")
     else:
-        lims = pd.read_csv(custom_lims, index_col="pars")
+        try:
+            lims = pd.read_csv(custom_lims, index_col="pars")
+        except ValueError:
+            raise ValueError("Please provide a valid file path.")
 
     # Determine if parameters are within the prescribed limits
     # Special handling for Npars == 7 case

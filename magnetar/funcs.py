@@ -3,14 +3,6 @@ from scipy.integrate import odeint
 from scipy.interpolate import interp1d
 
 
-class ValueError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
 # Global constants
 G = 6.674e-8                      # Gravitational constant - cgs units
 c = 3.0e10                        # Light speed - cm/s
@@ -143,6 +135,9 @@ parameters.
         tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
     elif GRBtype is None:
         tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
+    else:
+        raise ValueError("Please provide a valid value for GRBtype.\n\
+Options are: L, S, or None.")
 
     # Separate out parameters
     B, P, MdiscI, RdiscI, epsilon, delta = pars
