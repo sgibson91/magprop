@@ -16,7 +16,7 @@ sum of squared errors divided by the standard deviations.
     """
     # Chi-Square statistic
     if sd is not None:
-        chisq = np.sum(((ydata - ymod) ** 2.0) / sd)
+        chisq = np.sum(((ydata - ymod) / sd) ** 2.0)
 
     else:
         chisq = np.sum((ydata - ymod) ** 2.0)
@@ -43,11 +43,14 @@ ydata, ymod and yerr must all be of the same length.
     :param Npars: number of fitting parameters (int)
     :return:
     """
-
     cond1 = ydata.size == ymod.size
     cond2 = ydata.size == yerr.size
     cond3 = ymod.size == yerr.size
+
     if (not cond1) or (not cond2) or (not cond3):
+        print "ydata.size == ymod.size:", cond1
+        print "ydata.size == yerr.size:", cond2
+        print "ymod.size == yerr.size:", cond3
         raise ValueError("ydata, ymod and yerr should all be the same length")
 
     from mcmc_eqns import lnlike
