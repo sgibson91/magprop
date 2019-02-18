@@ -1,6 +1,5 @@
 astropy==2.0.11
 emcee==2.2.1
-magnetar==1.0.1
 matplotlib==2.0.0
 numpy==1.11.2
 pandas==0.23.4
