@@ -49,7 +49,7 @@ $ python -m pytest -vvv
 To see the code coverage of the test suite, run the following commands.
 ```bash
 $ coverage run -m pytest -vvv
-$ coverge report
+$ coverage report
 ```
 
 ## Citing this work
