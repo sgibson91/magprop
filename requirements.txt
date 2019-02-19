@@ -1,4 +1,5 @@
 astropy==2.0.11
+coverage=4.5.2
 emcee==2.2.1
 matplotlib==2.0.0
 numpy==1.11.2
