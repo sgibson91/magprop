@@ -10,11 +10,16 @@ setup:
 
 
 test:
-	source activate kernel && python -m pytest -vvv
+	source activate kernel
+	python -m pytest -vvv
 
 
 test-cov:
-	source activate kernel && coverage run -m pytest -vvv && coverage report && coverage html && echo "Visit htmlcov/index.html in a browser to see interactive code coverage of the test suite"
+	source activate kernel
+	coverage run -m pytest -vvv
+	coverage report
+	coverage html
+	@echo "Visit htmlcov/index.html in a browser to see interactive code coverage of the test suite"
 
 
 clean:
