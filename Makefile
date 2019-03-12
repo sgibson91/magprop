@@ -2,16 +2,20 @@
 # Burst sample in the sgibson91/magprop repo
 
 
+SHELL=/bin/bash
+CONDAROOT=/usr/local/anaconda3
+
+
 .PHONY: setup test test-cov clean
 
 
 setup:
+	conda env create --force --file environment.yml
 	mkdir -p plots
 
 
 test:
-	source activate kernel
-	python -m pytest -vvv
+	source $(CONDAROOT)/bin/activate && conda activate magnetar-env && which python && pwd
 
 
 test-cov:
@@ -23,7 +27,8 @@ test-cov:
 
 
 clean:
-	rm -f plots/*.png
-	rm -rf plots
-	rm -f htmlcov/*
-	rm -rf htmlcov
+	@conda env remove -n magnetar-env
+	@rm -f plots/*.png
+	@rm -rf plots
+	@rm -f htmlcov/*
+	@rm -rf htmlcov
