@@ -19,10 +19,7 @@ test:
 
 
 test-cov:
-	source activate kernel
-	coverage run -m pytest -vvv
-	coverage report
-	coverage html
+	source $(CONDAROOT)/bin/activate && conda activate magnetar-env && coverage run -m pytest -vvv && coverage report && coverage html
 	@echo "Visit htmlcov/index.html in a browser to see interactive code coverage of the test suite"
 
 
