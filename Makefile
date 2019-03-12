@@ -15,7 +15,7 @@ setup:
 
 
 test:
-	source $(CONDAROOT)/bin/activate && conda activate magnetar-env && which python && pwd
+	source $(CONDAROOT)/bin/activate && conda activate magnetar-env && python -m pytest -vvv
 
 
 test-cov:
