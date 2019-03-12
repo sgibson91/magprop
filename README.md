@@ -1,3 +1,5 @@
+:construction: :construction: This repo uses Python 2.7 which will be [deprecated on 01/01/2020](https://legacy.python.org/dev/peps/pep-0373/#id4). The code needs checking for compatibility with and updating to Python 3. See #38 :construction: :construction:
+
 # Magnetar Propeller Model with Fallback Accretion
 
 Suite of code that models fallback accretion onto a magnetar and uses Markov Chain Monte Carlo to fit this to samples of Gamma-Ray Bursts.
