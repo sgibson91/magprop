@@ -1,13 +1,8 @@
 import os
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
-
-
-# Check if sub-directory 'plots' exists - if not, create it
-directory = os.path.join(os.getcwd(), "plots")
-if not os.path.exists(directory):
-    os.mkdir(directory)
 
 
 # Global constants
@@ -201,6 +196,12 @@ Function to calculate the model light curve for a given set of parameters.
 
     return np.array([Ltot, Lprop, Ldip]) / 1.0e50
 
+
+# Command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-o', '--output-file', required=True,
+                    help="Output file to save figure to")
+args = parser.parse_args()
 
 grbs = {"Humped": [1.0, 5.0, 1.0e-3, 100.0, 1.0, 1.0e-6],
         "Classic": [1.0, 5.0, 1.0e-4, 1000.0, 1.0, 1.0e-6],
@@ -396,4 +397,4 @@ axes[1, 0].set_ylabel('Luminosity ($10^{50}$ ${\\rm erg}$ ${\\rm s}^{-1}$)',
                       fontsize=10)
 
 fig.tight_layout(h_pad=0.2, w_pad=0.1)
-fig.savefig(os.path.join(directory, "figure5.png"))
+fig.savefig(args.output_file)

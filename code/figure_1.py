@@ -1,13 +1,9 @@
 import os
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 
-
-# Check if sub-directory 'plots' exists - if not, create it
-directory = os.path.join(os.getcwd(), "plots")
-if not os.path.exists(directory):
-    os.mkdir(directory)
 
 # Global constants
 G = 6.674e-8                      # Gravitational constant (cgs)
@@ -107,6 +103,12 @@ over time.
     return np.array([Mdotdisc, omegadot])
 
 
+# Command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-o', '--output-file', required=True,
+                    help="Output file to save figure to.")
+args = parser.parse_args()
+
 # Variable set- up
 B = 1.0         # Magnetic field strength - 10^15 G
 P = 1.0         # Initial spin period - milliseconds
@@ -153,4 +155,4 @@ plt.tick_params(axis='both', which='major', labelsize=10)
 plt.xlabel('Fastness Parameter, $\Omega$', fontsize=12)
 plt.ylabel('Propeller Efficiency, $\eta_2$', fontsize=12)
 plt.tight_layout()
-plt.savefig(os.path.join(directory, "figure1.png"))
+plt.savefig(args.output_file)
