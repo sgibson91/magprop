@@ -23,6 +23,12 @@ test-cov:
 	@echo "Visit htmlcov/index.html in a browser to see interactive code coverage of the test suite"
 
 
+model_figures:
+	for number in 1 2 3 4 5 ; do \
+        source $(CONDAROOT)/bin/activate && conda activate magnetar-env && python code/figure_$$number.py -o plots/figure_$$number.png ; \
+    done
+
+
 clean:
 	@conda env remove -n magnetar-env
 	@rm -f plots/*.png
