@@ -1,14 +1,9 @@
 import os
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from matplotlib.ticker import MaxNLocator
-
-
-# Check if sub-directory 'plots' exists - if not, create it
-directory = os.path.join(os.getcwd(), "plots")
-if not os.path.exists(directory):
-    os.mkdir(directory)
 
 
 # Global variables
@@ -171,6 +166,12 @@ Function to be integrated by ODEINT following model in Bucciantini et al. (2006)
 
 
 # === Calculations === #
+
+# Command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-o', '--output-file', required=True,
+                    help="Output file to save figure to")
+args = parser.parse_args()
 
 # Variables
 B = 1.0          # Magnetic field in 10^15 G
@@ -341,4 +342,4 @@ ax4.set_ylabel('Total Luminosity ($10^{50}$ ${\\rm erg}$ ${\\rm s}^{-1}$)',
 ax4.set_title("(d)", fontsize=10)
 
 fig.tight_layout()
-fig.savefig(os.path.join(directory, "figure3.png"))
+fig.savefig(args.output_file)

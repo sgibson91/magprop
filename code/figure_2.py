@@ -1,13 +1,8 @@
 import os
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
-
-
-# Check if sub-directory 'plots' exists - if not, create it
-directory = os.path.join(os.getcwd(), "plots")
-if not os.path.exists(directory):
-    os.mkdir(directory)
 
 
 # Global constants
@@ -109,6 +104,12 @@ over time.
     return np.array([Mdotdisc, omegadot])
 
 
+# Command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-o', '--output-file', required=True,
+                    help="Output file to save figure to")
+args = parser.parse_args()
+
 # Variable set-up
 B = 1.0         # Magnetic field strength - 10^15 G
 P = 5.0         # Initial spin period - milliseconds
@@ -167,4 +168,4 @@ ax2.set_ylabel('$\omega$ (${\\rm s}^{-1}$)', fontsize=10)
 ax3.set_ylabel('$r_{\\rm m}/r_{\\rm c}$', fontsize=10)
 
 fig.tight_layout(h_pad=0.2)
-fig.savefig(os.path.join(directory, "figure2.png"))
+fig.savefig(args.output_file)
