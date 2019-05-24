@@ -2,9 +2,32 @@
 
 # Magnetar Propeller Model with Fallback Accretion
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Suite of code that models fallback accretion onto a magnetar and uses Markov Chain Monte Carlo to fit this to samples of Gamma-Ray Bursts.
 
 [![Build Status](https://travis-ci.org/sgibson91/magprop.svg?branch=master)](https://travis-ci.org/sgibson91/magprop) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master?urlpath=lab)
+
+## Installation
+
+To clone this repo:
+
+```
+git clone https://github.com/sgibson91/magprop.git
+cd magprop
+```
+
+To install the requirements:
+
+```
+pip install -r requirements.txt
+```
+
+To install the `magnetar` library:
+
+```
+python setup.py install
+```
 
 ## Usage
 
@@ -17,13 +40,16 @@ You may wish to right-click the badge and select "Open Link in New Tab" (or whic
 From the menu, select a Python 2 Console.
 (The second icon on the second row down.)
 
-To run a script, type the following:
+To run a figure script, type the following:
 ```
-python code/<script_name>.py
+python code/figure_<number>.py
 ```
 SHIFT-RETURN executes the command.
 
-It is recommended that you run all the scripts from the root of the repo (i.e. do not `cd code | python <script_name>.py`).
+**NOTES:**
+* It is recommended that you run all the scripts from the root of the repo (i.e. do not `cd code | python <script_name>.py`).
+* You will not be able to run the MCMC algorithms from within the Binder instance due to a computational cap.
+  The Binder link is provided for demonstration purposes only.
 
 * Figures will be saved to the sub-directory `plots/`.
 
@@ -34,6 +60,8 @@ It is recommended that you run all the scripts from the root of the repo (i.e. d
 * `figure_3.py`: Reproduces figure 3
 * `figure_4.py`: Reproduces figure 4
 * `figure_5.py`: Reproduces figure 5
+
+
 * `kcorr.py`: Performs a k-correction on a GRB dataset.
   Takes command line argument `-t S` for the short GRB sample.
 
@@ -80,6 +108,8 @@ eprint = {/oup/backfile/content_public/journal/mnras/470/4/10.1093_mnras_stx1531
 ```
 
 ### License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This work is published under the MIT license.
 Please see the `LICENSE` file for further information.
