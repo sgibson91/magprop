@@ -1,5 +1,4 @@
 import os
-import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
@@ -103,11 +102,9 @@ over time.
     return np.array([Mdotdisc, omegadot])
 
 
-# Command line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-o', '--output-file', required=True,
-                    help="Output file to save figure to.")
-args = parser.parse_args()
+# Check if plots folder exists
+if not (os.path.exists("plots")):
+    os.mkdir("plots")
 
 # Variable set- up
 B = 1.0         # Magnetic field strength - 10^15 G
@@ -155,4 +152,4 @@ plt.tick_params(axis='both', which='major', labelsize=10)
 plt.xlabel('Fastness Parameter, $\Omega$', fontsize=12)
 plt.ylabel('Propeller Efficiency, $\eta_2$', fontsize=12)
 plt.tight_layout()
-plt.savefig(args.output_file)
+plt.savefig("plots/figure_1.png")
