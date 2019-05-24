@@ -1,5 +1,4 @@
 import os
-import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
@@ -106,11 +105,9 @@ over time.
     return np.array([Mdotdisc, omegadot])
 
 
-# Command line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-o', '--output-file', required=True,
-                    help="Output file to save figure to")
-args = parser.parse_args()
+# Check if plots folder exists
+if not (os.path.exists("plots")):
+    os.mkdir("plots")
 
 fig, axes = plt.subplots(4, 3, sharex=True, figsize=(11, 11))
 
@@ -219,4 +216,4 @@ axes[2, 0].set_yticks([1.0e-6, 1.0e-4, 1.0e-2, 1.0e0, 1.0e2])
 
 fig.tight_layout(h_pad=0.0)
 
-fig.savefig(args.output_file)
+fig.savefig("plots/figure_4.png")

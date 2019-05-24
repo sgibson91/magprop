@@ -1,5 +1,4 @@
 import os
-import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
@@ -165,13 +164,11 @@ Function to be integrated by ODEINT following model in Bucciantini et al. (2006)
     return np.array([Mdotdisc, omegadot])
 
 
-# === Calculations === #
+# Check if plots folder exists
+if not (os.path.exists("plots")):
+    os.mkdir("plots")
 
-# Command line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-o', '--output-file', required=True,
-                    help="Output file to save figure to")
-args = parser.parse_args()
+# === Calculations === #
 
 # Variables
 B = 1.0          # Magnetic field in 10^15 G
@@ -342,4 +339,4 @@ ax4.set_ylabel('Total Luminosity ($10^{50}$ ${\\rm erg}$ ${\\rm s}^{-1}$)',
 ax4.set_title("(d)", fontsize=10)
 
 fig.tight_layout()
-fig.savefig(args.output_file)
+fig.savefig("plots/figure_3.png")

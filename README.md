@@ -27,14 +27,14 @@ It is recommended that you run all the scripts from the root of the repo (i.e. d
 
 * Figures will be saved to the sub-directory `plots/`.
 
-### List of Scripts
+### List of Scripts in `code/`
 
-* **figure1.py:** Reproduces figure 1
-* **figure2.py:** Reproduces figure 2
-* **figure3.py:** Reproduces figure 3
-* **figure4.py:** Reproduces figure 4
-* **figure5.py:** Reproduces figure 5
-* **kcorr.py:** Performs a k-correction on a GRB dataset.
+* `figure_1.py`: Reproduces figure 1
+* `figure_2.py`: Reproduces figure 2
+* `figure_3.py`: Reproduces figure 3
+* `figure_4.py`: Reproduces figure 4
+* `figure_5.py`: Reproduces figure 5
+* `kcorr.py`: Performs a k-correction on a GRB dataset.
   Takes command line argument `-t S` for the short GRB sample.
 
 ## Running Tests
