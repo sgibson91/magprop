@@ -34,6 +34,8 @@ It is recommended that you run all the scripts from the root of the repo (i.e. d
 * `figure_3.py`: Reproduces figure 3
 * `figure_4.py`: Reproduces figure 4
 * `figure_5.py`: Reproduces figure 5
+* `clean_data.py`: A script to clean the raw datafiles.
+  This script **must** be run _before_ `kcorr.py` or any MCMC simulation.
 * `kcorr.py`: Performs a k-correction on a GRB dataset.
   Takes command line argument `-t S` for the short GRB sample.
 
