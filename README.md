@@ -165,4 +165,4 @@ eprint = {/oup/backfile/content_public/journal/mnras/470/4/10.1093_mnras_stx1531
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This work is published under the MIT license.
-Please see the `LICENSE` file for further information.
+Please see the [`LICENSE`](./LICENSE) file for further information.
