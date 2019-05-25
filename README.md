@@ -2,28 +2,38 @@
 
 # Magnetar Propeller Model with Fallback Accretion
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 Suite of code that models fallback accretion onto a magnetar and uses Markov Chain Monte Carlo to fit this to samples of Gamma-Ray Bursts.
 
-[![Build Status](https://travis-ci.org/sgibson91/magprop.svg?branch=master)](https://travis-ci.org/sgibson91/magprop) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master?urlpath=lab)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/sgibson91/magprop.svg?branch=master)](https://travis-ci.org/sgibson91/magprop)
+
+* [Installation](#installation)
+* [Usage](#usage)
+  * [Reproducing Model Figures 1-5](#reproducing-model-figures-1-5)
+  * [Running MCMC on Synthetic Datasets](#running-mcmc-on-synthetic-datasets)
+  * [Binder](#binder)
+* [Preparing the GRB samples](#preparing-the-grb-samples)
+* [Running tests](#running-tests)
+* [Citing this work](#citing-this-work)
+  * [Paper](#paper)
+  * [Citation](#citation)
+* [License](#license)
 
 ## Installation
 
-To clone this repo:
+Begin by cloning this repo.
 
 ```
 git clone https://github.com/sgibson91/magprop.git
 cd magprop
 ```
 
-To install the requirements:
+Install the requirements using `pip`.
 
 ```
 pip install -r requirements.txt
 ```
 
-To install the `magnetar` library:
+Use the `setup.py` to install the `magnetar` library.
 
 ```
 python setup.py install
@@ -31,55 +41,98 @@ python setup.py install
 
 ## Usage
 
-To run the scripts in this repo, first click the badge below.
-This will launch a JupyterLab environment containing the repo, via Binder.
-You may wish to right-click the badge and select "Open Link in New Tab" (or whichever variant your browser provides) so you can still refer to these notes.
+### Reproducing Model Figures 1-5
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master/?urlpath=lab)
+Execute a figure script by running:
 
-From the menu, select a Python 2 Console.
-(The second icon on the second row down.)
-
-To run a figure script, type the following:
 ```
 python code/figure_<number>.py
 ```
-SHIFT-RETURN executes the command.
 
-**NOTES:**
-* It is recommended that you run all the scripts from the root of the repo (i.e. do not `cd code | python <script_name>.py`).
-* You will not be able to run the MCMC algorithms from within the Binder instance due to a computational cap.
-  The Binder link is provided for demonstration purposes only.
+These scripts will reproduce the model figures 1-5 in the Short GRBs paper.
+The figures will be saved to the `plots/` directory.
 
-* Figures will be saved to the sub-directory `plots/`.
+### Running MCMC on Synthetic Datasets
 
-### List of Scripts in `code/`
+An MCMC simulation can be run on a synthetic dataset of one of the four GRB types in order to evaluate the performance of the model and MCMC algorithm.
+The four GRB types are: Humped, Classic, Sloped, and Stuttering.
 
-* `figure_1.py`: Reproduces figure 1
-* `figure_2.py`: Reproduces figure 2
-* `figure_3.py`: Reproduces figure 3
-* `figure_4.py`: Reproduces figure 4
-* `figure_5.py`: Reproduces figure 5
+First off, generate a dataset by running the following script.
 
+```
+python code/synthetic_dataset/generate_synthetic_dataset.py --grb <GRB-type>
+```
 
-* `kcorr.py`: Performs a k-correction on a GRB dataset.
-  Takes command line argument `-t S` for the short GRB sample.
+The dataset will be saved to `data/synthetic_datasets/<GRB-type>/<GRB-type>.csv`.
+
+Then run the MCMC simulation on the synthetic dataset.
+
+```
+python code/synthetic_dataset/mcmc_synthetic.py --grb <GRB-type>
+```
+
+This will use 4 threads to run 50 MCMC walkers for 20000 steps.
+Generated datafiles will be saved to `data/synthetic_datasets/<GRB-type>` and figures will be saved to `plots/synthetic_datasets/<GRB-type>`.
+
+If you need to re-run an anlysis with the same input random seed, parse the `--re-run` flag.
+
+Once the MCMC is completed, then run the analysis script to generate figures and fitting statistics.
+
+```
+python code/synthetic_datasets/plot_synthetic.py --grb <GRB-type>
+```
+
+The optimal model will be saved to `data/synthetic_datasets/<GRB-type>/<GRB-type>_model.csv` and `plots/synthetic_datasets/<GRB-type>/<GRB-type>_model.png`.
+Another important file to check is `data/synthetic_datasets/<GRB-type>/<GRB-type>_stats.txt` which will contain the optimised parameters and fitting statistics.
+
+### Binder
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master?urlpath=lab)
+
+To run this repo in Binder, click the launch button above.
+When your server launches, you will see a JupyterLab interface.
+
+Running a script in the terminal will be the same as running the scripts locally.
+If you run a script in the Python Console, then you'll need to modify the command to the following.
+
+```
+%run code/figure_<number>.py
+```
+
+You will **NOT** be able to run the MCMC simulations inside the Binder instance as the servers are limited to `1G` memory and `0.5` CPU.
+Please follow the instructions in [Installation](#installation) in order to run the MCMC simulations locally.
+
+## Preparing the GRB samples
+
+The raw datafiles for the Short GRB sample are stored in `data/SGRBS/`.
+The dataset needs cleaning first to remove comments generated by the website that hosts the data and convert it to CSV format.
+
+```
+python code/clean_data.py
+```
+
+The last stage of preparing the dataset involves performing a _k_-correction.
+A _k_-correction accounts for the distance the GRB exploded at and the energy bandwidth of the telescope that captured the data in order to make it compatible with the magnetar model.
+
+Run the _k_-correction on the Short GRB sample by running the following command.
+
+```
+python code/kcorr -t S
+```
 
 ## Running Tests
 
-To run tests after launching the Binder, select `terminal` from the launcher window in JupyterLab and execute the following commands.
-```bash
-# Activate the environment
-$ source activate kernel
+To run tests, execute the following command.
 
-# Run the tests with verbose output
-$ python -m pytest -vvv
+```
+python -m pytest -vvv
 ```
 
 To see the code coverage of the test suite, run the following commands.
-```bash
-$ coverage run -m pytest -vvv
-$ coverge report
+
+```
+coverage run -m pytest -vvv
+coverge report
 ```
 
 ## Citing this work
