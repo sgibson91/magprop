@@ -11,6 +11,6 @@ GRBS=( 050724 051016B 051227 060614 061006 061210 070714B 071227 080123 080503 1
 
 for GRB in "${GRBS[@]}"
 do
-  rm data/SGRBS/GRB_raw.txt
-  echo "Deleted: data/SGRBS/GRB_raw.txt"
+  rm data/SGRBS/${GRB}_raw.txt
+  echo "Deleted: data/SGRBS/${GRB}_raw.txt"
 done
