@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 import sys
 import argparse
@@ -63,12 +65,11 @@ def main(args):
     elif args.type == "L":
         kcorr_df = pd.read_csv("data/kcorr_lgrbs.csv", index_col="GRB")
     else:
-        print "Please provide a valid type argument.\n" \
-              "The type of GRB: L - long, S - short"
+        print("Please provide a valid type argument.\n" \
+              "The type of GRB: L - long, S - short")
         sys.exit(2)
 
-    if args.verbose:
-        print "Loading the {0}GRB properties...".format(args.type)
+    print("--> Loading the {0}GRB properties...".format(args.type))
     grbs = kcorr_df.index.tolist()    # Get list of GRB names
 
     # Calculate the luminosity distance in cm and add to data frame
@@ -88,18 +89,16 @@ def main(args):
             outfile = os.path.join("data", "LGRBS", grb, "".join([grb,
                                                                   "_k.csv"]))
         else:
-            print "Please provide a valid type argument.\n" \
-                  "The type of GRB: L - long, S - short"
+            print("Please provide a valid type argument.\n" \
+                  "The type of GRB: L - long, S - short")
             sys.exit(2)
 
-        if args.verbose:
-            print "Loading data for: {0}...".format(grb)
         # Read in GRB data file
+        print("--> Loading data for: {0}...".format(grb))
         data = pd.read_csv(infile, index_col=False)
 
-        if args.verbose:
-            print "* Performing k-correction..."
         # Perform k-correction
+        print("--> Performing k-correction...")
         k_data = k_correction(data, kcorr_df["Gamma"][grb],
                               kcorr_df["sigma"][grb], kcorr_df["z"][grb],
                               kcorr_df["dl_cm"][grb])
@@ -108,9 +107,8 @@ def main(args):
         k_data["Lum50err"] = gmean([k_data["Lum50pos"].values,
                                     np.abs(k_data["Lum50neg"].values)])
 
-        if args.verbose:
-            print "* Writing to output file..."
         # Output corrected to data
+        print("--> Writing to output file...")
         k_data.to_csv(outfile, index=False)
 
 
@@ -119,7 +117,5 @@ if __name__ == "__main__":
                                      " samples.")
     parser.add_argument("-t", "--type", required=True,
                         help="The type of GRB: L - long, S - short")
-    parser.add_argument("-v", "--verbose", action="store_true",
-                        help="Activates a descriptive output.")
 
     main(parser.parse_args())
