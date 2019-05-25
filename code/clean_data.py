@@ -32,6 +32,3 @@ for grb in sgrbs:
     # Write data frame to CSV file
     df.to_csv(outfile, index=False)
 
-    # Remove input file
-    os.remove(infile)
-
