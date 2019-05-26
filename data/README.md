@@ -25,6 +25,7 @@ The raw data files have filepaths fitting the pattern: `data/<GRB-sample>/<GRB-n
 
 These files are in `.txt` format and have six columns of floating point data.
 The columns in order from left to right are: observed arrival time of photon, positive time uncertainty, negative time uncertainty, observed photon flux, positive flux uncertainty, negative flux uncertainty.
+Temporal values are reported in units of seconds and flux values are reported in units of `ergs s^-1 cm^-2`.
 
 There are also rows in the raw datafiles pertaining to the plotting package used by the host website.
 Such rows begin with `!`, `READ` or `NO`.
@@ -36,6 +37,7 @@ After applying `code/clean_data.py`, the data files will now have filepaths foll
 
 These files are in CSV format and have 6 columns of floating point data with headers (from left to right): `flux`, `fluxneg`, `fluxpos`, `t`, `tneg`, `tpos`.
 These relate to the observed flux, negative flux uncertainty, positive flux uncertainty, observed photon arrival time, negative time uncertainty and positive flux uncertainty, respectively.
+Temporal values are reported in units of seconds and flux values are reported in units of `ergs s^-1 cm^-2`.
 
 ### _k_-corrected Format
 
@@ -45,7 +47,7 @@ This code performs a _k_-correction on the data which accounts for the distance 
 The _k_-corrected data files will have filepaths that follow the pattern: `data/<GRB-sample>/<GRB-name>/<GRB-name>_k.csv`.
 These files are in CSV format and have 7 columns of floating point data with headers: `Lum50`, `Lum50neg`, `Lum50pos`, `t`, `tneg`, `tpos`, `Lum50err`.
 These relate to the luminosity, negative luminosity uncertainty, positive luminosity uncertainty, red-shift corrected time, negative time uncertainty, positive time uncertainty and the geometric mean of `Lum50pos` and `Lum50neg`, respectively.
-All luminosities are reported in units of `10^50 ergs s^-1`.
+Luminosities are reported in units of `10^50 ergs s^-1` and temporal values are reported in units of seconds.
 
 ## GRB Samples
 
