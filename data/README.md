@@ -6,6 +6,7 @@ The data are available at the [UK Swift Science Data Centre website](http://www.
 
 * [Data Collection Process](#data-collection-process)
   * [Combined BAT and XRT GRB data](#combined-bat-and-xrt-grb-data)
+  * [XRT GRB data](#xrt-grb-data)
 * [Data Format](#data-format)
   * [Raw format](#raw-format)
   * [Cleaned Format](#cleaned-format)
@@ -40,6 +41,23 @@ The data are available at the [UK Swift Science Data Centre website](http://www.
    * **Display which bands?:** Uncheck "Flux density at 10 keV" and select "0.3-10 keV flux".
 
 6. Underneath the graph, click "Data file".
+   This will show the raw data which can be copy/pasted into the `data/<GRB-sample>/<GRB-name>_raw.txt` file.
+
+### XRT GRB data
+
+**XRT:** X-Ray Telescope
+
+1. Go to the [Swift website](http://www.swift.ac.uk)
+
+2. Search for the GRB you want to collect the data for.
+   (Search box is in the top right of the page.)
+
+3. Click on "XRT lightcurve".
+
+4. Find the graph titled: "Basic Light Curve".
+   (It should have y-axis units of "Count Rate (0.3-10 keV) (/s)".)
+
+5. Above the graph, click "Data file".
    This will show the raw data which can be copy/pasted into the `data/<GRB-sample>/<GRB-name>_raw.txt` file.
 
 ## Data Format
