@@ -37,7 +37,7 @@ The data are available at the [UK Swift Science Data Centre website](http://www.
 5. In the box to the right of the graph, select the following options:
 
    * **BAT binning:** SNR 5
-   * **Subplot?:** np
+   * **Subplot?:** no
    * **Display which bands?:** Uncheck "Flux density at 10 keV" and select "0.3-10 keV flux".
 
 6. Underneath the graph, click "Data file".
@@ -103,7 +103,7 @@ Luminosities are reported in units of `10^50 ergs s^-1` and temporal values are 
 
 ### Short GRBs with Extended Emission (SGRBEEs)
 
-These is the Short GRB with Extended Emission sample used in the 2017 paper.
+This is the Short GRB with Extended Emission sample used in the 2017 paper.
 The data contain combined BAT and XRT observations.
 
 * 050724
