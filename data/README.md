@@ -5,6 +5,7 @@ This folder contains samples of Gamma-Ray Bursts (GRBs) that were interrogated b
 The data are available at the [UK Swift Science Data Centre website](http://www.swift.ac.uk/) and the observations were made by the [Neil Gehrels Swift Observatory](https://swift.gsfc.nasa.gov/).
 
 * [Data Collection Process](#data-collection-process)
+  * [Combined BAT and XRT GRB data](#combined-bat-and-xrt-grb-data)
 * [Data Format](#data-format)
   * [Raw format](#raw-format)
   * [Cleaned Format](#cleaned-format)
@@ -17,6 +18,29 @@ The data are available at the [UK Swift Science Data Centre website](http://www.
 
 ## Data Collection Process
 
+### Combined BAT and XRT GRB Data
+
+**BAT:** Burst Alert Telescope
+
+**XRT:** X-Ray Telescope
+
+1. Go to the [Swift website](http://www.swift.ac.uk)
+
+2. Search for the GRB you want to collect the data for.
+   (Search box is in the top right of the page.)
+
+3. Click on "Burst Analyser".
+
+4. Find the graph titled: "BAT-XRT unabsorbed flux light curves".
+
+5. In the box to the right of the graph, select the following options:
+
+   * **BAT binning:** SNR 5
+   * **Subplot?:** np
+   * **Display which bands?:** Uncheck "Flux density at 10 keV" and select "0.3-10 keV flux".
+
+6. Underneath the graph, click "Data file".
+   This will show the raw data which can be copy/pasted into the `data/<GRB-sample>/<GRB-name>_raw.txt` file.
 
 ## Data Format
 
@@ -62,6 +86,7 @@ Luminosities are reported in units of `10^50 ergs s^-1` and temporal values are 
 ### Short GRBs with Extended Emission (SGRBEEs)
 
 These is the Short GRB with Extended Emission sample used in the 2017 paper.
+The data contain combined BAT and XRT observations.
 
 * 050724
 * 051016B
