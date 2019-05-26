@@ -131,8 +131,8 @@ python -m pytest -vvv
 To see the code coverage of the test suite, run the following commands.
 
 ```
-coverage run -m pytest -vvv
-coverge report
+$ coverage run -m pytest -vvv
+$ coverage report
 ```
 
 ## Citing this work

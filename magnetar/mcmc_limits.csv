@@ -1,10 +1,10 @@
 pars,lower,upper
 B,0.001,10.0
 P,0.69,10.0
-MdiscI,0.001,0.1
-RdiscI,50.0,2000.0
-epsilon,0.1,1000.0
-delta,0.00001,50.0
+log_MdiscI,-3.0,-1.0
+log_RdiscI,1.6989700043360187,3.3010299956639813
+log_epsilon,-1.0,3.0
+log_delta,-5.0,1.6989700043360187
 dipeff,0.01,1.0
 propeff,0.01,1.0
 f_beam,1.0,600.0

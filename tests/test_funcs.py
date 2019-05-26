@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from scipy.integrate import odeint
-from magnetar.funcs import init_conds, odes
-from magnetar.fit_stats import redchisq
+from magnetar.funcs import *
+from magnetar.fit_stats import redchisq, aicc
 
 
 ################################################################################
@@ -47,6 +47,21 @@ Function to test that odes is consistently being integrated by ODEINT.
 
     assert (np.isclose(Mdisc, expected_data["Mdisc"]).all() &
             np.isclose(omega, expected_data["omega"]).all())
+
+
+def test_model_light_curve():
+    expected_data = pd.read_csv("tests/test_data/model_light_curve.csv",
+                                index_col=False)
+
+    pars = [1.0, 5.0, 0.001, 100.0, 0.1, 1.0]
+    t, Ltot, Lprop, Ldip = model_lc(pars)
+
+    cond_t = np.isclose(t, expected_data["t"]).all()
+    cond_Ltot = np.isclose(Ltot, expected_data["Ltot"]).all()
+    cond_Lprop = np.isclose(Lprop, expected_data["Lprop"]).all()
+    cond_Ldip = np.isclose(Ldip, expected_data["Ldip"]).all()
+
+    assert cond_t & cond_Ltot & cond_Lprop & cond_Ldip
 
 
 ################################################################################
@@ -150,42 +165,6 @@ Function to test the chi squared statistic calculation in fit_stats.py
     assert redchisq(ydata, ymod, sd=yerr) == chisq
 
 
-def lnlike(ydata, yerr, ymod):
-    """
-Function to calculate the log-likelihood assuming Gaussian statistics.
-    """
-    return -0.5 * np.sum(((ydata - ymod) / yerr) ** 2.0)
-
-
-def aicc(ydata, ymod, yerr, Npars):
-    """
-Function to calculate the corrected Akaike Information Criterion.
-
-ydata, ymod and yerr must all be of the same length.
-
-    :param ydata: list or array of y data points (float)
-    :param ymod: list or array of y model points (float)
-    :param yerr: list or array of errors on ydata (float)
-    :param Npars: number of fitting parameters (int)
-    :return:
-    """
-    cond1 = ydata.size == ymod.size
-    cond2 = ydata.size == yerr.size
-    cond3 = ymod.size == yerr.size
-
-    if (not cond1) or (not cond2) or (not cond3):
-        print "ydata.size == ymod.size:", cond1
-        print "ydata.size == yerr.size:", cond2
-        print "ymod.size == yerr.size:", cond3
-        raise ValueError("ydata, ymod and yerr should all be the same length")
-
-    a = 2.0 * lnlike(ydata, yerr, ymod)
-    b = 2.0 * Npars
-    c = ((2.0 * Npars) * (Npars + 1.0)) / (ydata.size - Npars - 1.0)
-
-    return a + b + c
-
-
 def test_akaike_info_criterion():
     """
 Function to test the calculation of the corrected Akaike Information Criterion.
@@ -196,11 +175,9 @@ Function to test the calculation of the corrected Akaike Information Criterion.
     ymod = expected_data["ymod"]
     Npars = 2
 
-    a = 2.0 * -0.5 * np.sum(((ydata - ymod) / yerr) ** 2.0)
+    a = -1.0 * np.sum(((ydata - ymod) / yerr) ** 2.0)
     b = 2.0 * Npars
     c = ((2.0 * Npars) * (Npars + 1.0)) / (ydata.size - Npars - 1.0)
-
     expected_aicc = a + b + c
-    actual_aicc = aicc(ydata, ymod, yerr, Npars)
 
-    assert expected_aicc == actual_aicc
+    assert aicc(ydata, ymod, yerr, Npars) == expected_aicc
