@@ -62,7 +62,7 @@ Please quote the following citation when referring to this work.
 
 ### Paper
 
-* [*Fallback Accretion on to a Newborn Magnetar: Short GRBs with Extended Emission*](https://arxiv.org/abs/1706.04802)
+* [*Fallback Accretion on to a Newborn Magnetar: Short GRBs with Extended Emission*](https://arxiv.org/abs/1706.04802) <html><span class="__dimensions_badge_embed__" data-doi="10.1093/mnras/stx1531"></span><script async src="https://badge.dimensions.ai/badge.js" charset="utf-8"></script></html>
 
 ### Citation
 
@@ -80,6 +80,10 @@ URL = {http://dx.doi.org/10.1093/mnras/stx1531},
 eprint = {/oup/backfile/content_public/journal/mnras/470/4/10.1093_mnras_stx1531/1/stx1531.pdf}
 }
 ```
+
+### Software Citation
+
+To cite the software contained in this repo, please use the metadata contained in [`CITATION.cff`](./CITATION.cff).
 
 ### License
 
