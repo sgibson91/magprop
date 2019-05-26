@@ -7,6 +7,7 @@ The data are available at the [UK Swift Science Data Centre website](http://www.
 * [Data Collection Process](#data-collection-process)
   * [Combined BAT and XRT GRB data](#combined-bat-and-xrt-grb-data)
   * [XRT GRB data](#xrt-grb-data)
+  * [_k_-correction Variables](#_k_-correction-variables)
 * [Data Format](#data-format)
   * [Raw format](#raw-format)
   * [Cleaned Format](#cleaned-format)
@@ -59,6 +60,24 @@ The data are available at the [UK Swift Science Data Centre website](http://www.
 
 5. Above the graph, click "Data file".
    This will show the raw data which can be copy/pasted into the `data/<GRB-sample>/<GRB-name>_raw.txt` file.
+
+### _k_-correction Variables
+
+1. Go to the [Swift website](http://www.swift.ac.uk)
+
+2. Search for the GRB you want to collect the data for.
+   (Search box is in the top right of the page.)
+
+3. Click on "XRT spectrum".
+
+4. Scroll down to the "Late Time spectrum".
+
+5. Use the table at the bottom of the page to gather the following information:
+
+   * **Redshift:** will be labelled "z of absorber".
+     If the value given is zero, check the literature or use the average of the sample with red-shift values.
+   * **Photon Index:** will be labelled "Photon Index" and its uncertainties given.
+   * **Absorption coefficient:** divide the number in "Flux (0.3 - 10 keV) (unabsorbed)" by the number in "Flux (0.3 - 10 keV) (absorbed)".
 
 ## Data Format
 
