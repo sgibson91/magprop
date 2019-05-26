@@ -53,9 +53,7 @@ ydata, ymod and yerr must all be of the same length.
         print "ymod.size == yerr.size:", cond3
         raise ValueError("ydata, ymod and yerr should all be the same length")
 
-    from mcmc_eqns import lnlike
-
-    a = 2.0 * lnlike(ydata, ymod, yerr)
+    a = -1.0 * np.sum(((ydata - ymod) / yerr) ** 2.0)
     b = 2.0 * Npars
     c = ((2.0 * Npars) * (Npars + 1.0)) / (ydata.size - Npars - 1.0)
 
