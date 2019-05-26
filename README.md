@@ -68,8 +68,13 @@ The dataset will be saved to `data/synthetic_datasets/<GRB-type>/<GRB-type>.csv`
 Then run the MCMC simulation on the synthetic dataset.
 
 ```
-python code/synthetic_dataset/mcmc_synthetic.py --grb <GRB-type>
+python code/synthetic_dataset/mcmc_synthetic.py --grb <GRB-type> --n-pars <Npars> --n-walk <Nwalk> --n-step <Nstep>
 ```
+
+where:
+* `Npars` is the number of parameters to optimise for,
+* `Nwalk` is the number of MCMC walkers to use,
+* `Nstep` is the number of MCMC steps to take.
 
 This will use 4 threads to run 50 MCMC walkers for 20000 steps.
 Generated datafiles will be saved to `data/synthetic_datasets/<GRB-type>` and figures will be saved to `plots/synthetic_datasets/<GRB-type>`.
