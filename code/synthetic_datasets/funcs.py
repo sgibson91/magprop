@@ -226,8 +226,8 @@ propeff : Propeller efficiency (float, optional)
     Lprop = np.where(inLd2, Lprop, 0.0)
 
     Ltot = f_beam * (Ldip + Lprop)  # Total (beamed) luminosity
-    if xdata is not None:
-        return tarr, Ltot/1.0e50, Lprop/1.0e50, Ldip/1.0e50
+    if xdata is None:
+        return np.array([tarr, Ltot / 1.0e50, Lprop / 1.0e50, Ldip / 1.0e50])
 
     lum_func = interp1d(tarr, Ltot)
     L = lum_func(xdata)
