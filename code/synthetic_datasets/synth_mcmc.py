@@ -50,7 +50,19 @@ def create_filenames(GRB):
     f = open(fbad, "w")
     f.close()
 
-    return fdata, fchain, fbad, fstat, fout
+    # Plot basename
+    basename = os.path.join("plots", "synthetic_datasets")
+    if not os.path.exists(basename):
+        os.mkdir(basename)
+
+    # Plot directory name
+    dirname = os.path.join(basename, GRB)
+    if not os.path.join(dirname):
+        os.mkdir(dirname)
+
+    fplot = os.path.join(dirname, "{0}_trace.png")
+
+    return fdata, fchain, fbad, fstat, fout, fplot
 
 
 truths = {
@@ -71,7 +83,7 @@ args = parse_args()
 GRB = args.grb
 
 # Build filenames
-fdata, fchain, fbad, fstat, fout = create_filenames(GRB)
+fdata, fchain, fbad, fstat, fout, fplot = create_filenames(GRB)
 
 # Read in data
 data = np.loadtxt(fdata, delimiter=",", skiprows=1)
@@ -91,8 +103,8 @@ p0 = np.array(truths[tag])
 pos = [p0 + 1.e-4 * np.random.randn(Npars) for i in range(Nwalk)]
 
 # Initialise Ensemble Sampler
-sampler = em.EnsembleSampler(Nwalk, Npars, lnprob, args=(x, y, yerr, u[:Npars],
-                             l[:Npars], fbad), threads=3)
+sampler = em.EnsembleSampler(Nwalk, Npars, lnprob, args=(x, y, yerr, u, l, fbad),
+                             threads=3)
 
 # Run MCMC
 sampler.run_mcmc(pos, Nstep)
@@ -156,5 +168,5 @@ for i in range(Npars):
 
 axes[-1].set_xlabel('Model Number', fontsize=12)
 fig.tight_layout(h_pad=0.1)
-fig.savefig('{0}_timeseries.png'.format(fn), dpi=720)
+fig.savefig('{0}'.format(fplot), dpi=720)
 plt.clf()
