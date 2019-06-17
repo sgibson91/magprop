@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument(
         "--grb",
         required=True,
-        choice=["Humped", "Classic", "Sloped", "Stuttering"],
+        choices=["Humped", "Classic", "Sloped", "Stuttering"],
         help=""
     )
 
@@ -29,7 +29,7 @@ def parse_args():
 def create_filenames(GRB):
     # Data basename
     basename = os.path.join("data", "synthetic_datasets")
-    if not os.path.exist(basename):
+    if not os.path.exists(basename):
         raise FileNotFoundError("Please make sure your chosen dataset exists.")
         sys.exit(1)
 
@@ -99,7 +99,7 @@ Nstep = 20000  # Number of MCMC steps
 Nburn = 500    # Number of burn-in steps to be removed
 
 # Calculate initial position
-p0 = np.array(truths[tag])
+p0 = np.array(truths[GRB])
 pos = [p0 + 1.e-4 * np.random.randn(Npars) for i in range(Nwalk)]
 
 # Initialise Ensemble Sampler
@@ -141,7 +141,7 @@ with open("{0}_walk_lnp.csv".format(fn), 'w') as f:
 body = """{0}
 Mean acceptance fraction: {1}
 Convergence ratios: {2}
-""".format(tag, np.mean(sampler.acceptance_fraction),
+""".format(GRB, np.mean(sampler.acceptance_fraction),
            conv(sampler.chain[:,Nburn:,:], Npars, Nwalk, Nstep))
 print(body)
 with open(fout, 'a') as f:
