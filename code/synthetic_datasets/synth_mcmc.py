@@ -62,7 +62,7 @@ def create_filenames(GRB):
 
     fplot = os.path.join(dirname, "{0}_trace.png")
 
-    return fdata, fchain, fbad, fstat, fout, fplot
+    return fdata, fchain, fbad, fstat, fout, fplot, dirname
 
 
 truths = {
@@ -83,7 +83,7 @@ args = parse_args()
 GRB = args.grb
 
 # Build filenames
-fdata, fchain, fbad, fstat, fout, fplot = create_filenames(GRB)
+fdata, fchain, fbad, fstat, fout, fplot, fn = create_filenames(GRB)
 
 # Read in data
 data = np.loadtxt(fdata, delimiter=",", skiprows=1)
@@ -120,7 +120,7 @@ with open(fchain, 'w') as f:
 
 # Write each individual parameter to it's own file
 for k in range(Npars):
-    with open("{0}_walk_{1}.csv".format(fn, k), 'w') as f:
+    with open("{0}_{1}.csv".format(fn, k), 'w') as f:
         for j in range(Nstep):
             for i in range(Nwalk):
                 if i == (Nwalk-1):
@@ -129,7 +129,7 @@ for k in range(Npars):
                     f.write("{0:.6f}, ".format(sampler.chain[i,j,k]))
 
 # Write probability to it's own file
-with open("{0}_walk_lnp.csv".format(fn), 'w') as f:
+with open("{0}_lnp.csv".format(fn), 'w') as f:
     for j in range(Nstep):
         for i in range(Nwalk):
             if i == (Nwalk-1):
