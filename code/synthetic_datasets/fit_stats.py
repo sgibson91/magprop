@@ -1,32 +1,34 @@
 import numpy as np
 
+
 def redchisq(ydata, ymod, deg=None, sd=None):
     """
-Returns the reduced chi-square statistic for an arbitrary model, chisq/nu,
+Returns the reduced chi-square error statistic for an arbitrary model, chisq/nu,
 where nu is the number of degrees of freedom. If individual standard deviations
 (array sd) are supplied, then the chi-square error statistic is computed as the
 sum of squared errors divided by the standard deviations.
 
-ydata, ymod, sd assumed to be Numpy arrays. deg integer.
-
-Usage: >>> chisq = redchisq(ydata, ymod, n, sd)
-ydata : data [array] (required)
- ymod : model evaluated at the same x points as ydata [array] (required)
-  deg : number of free parameters in the model [integer] (optional)
-   sd : uncertainties in ydata [array] (optional)
+    :param ydata: array containing data (float)
+    :param ymod: array containing model (float)
+    :param deg: number of free parameter in the model (int)
+    :param sd: array of uncertainties in ydata (float)
+    :return: (reduced) chi-square statistic (float)
     """
-    # Chi-square statistic
-    if sd == None:
-        chisq = np.sum((ydata - ymod) ** 2.0)
-    else:
+    # Chi-Square statistic
+    if sd is not None:
         chisq = np.sum(((ydata - ymod) / sd) ** 2.0)
 
-    if deg == None:
-        return chisq
     else:
+        chisq = np.sum((ydata - ymod) ** 2.0)
+
+    if deg is not None:
         # Number of degrees of freedom assuming 2 free parameters
-        nu = ydata.size - 1 - deg
+        nu = ydata.size - 1.0 - deg
+
         return chisq / nu
+
+    else:
+        return chisq
 
 
 def aicc(ydata, ymod, yerr, Npars):
