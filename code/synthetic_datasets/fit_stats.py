@@ -29,44 +29,30 @@ ydata : data [array] (required)
         return chisq / nu
 
 
-def AIC(ymod, ydata, yerr, k):
+def aicc(ydata, ymod, yerr, Npars):
     """
-Function to calculate the Akaike Information Criterion. This is a statistic
-for model comparison with different numbers of fitting parameters. It can be
-derived from the Chi Square statistic and includes a penalty for 'overfitting'
-by increasing the number of free parameters. The minimum AIC value reveals
-the most statistically significant model.
+Function to calculate the corrected Akaike Information Criterion.
 
-Equation: AIC = -2ln(L) + 2k + (2k(k+1))/(N-k-1)
-where: L is the maximised likelihood
-       k is the number of free parameters in the model
-       N is the number of observations (i.e. data points).
+ydata, ymod and yerr must all be of the same length.
 
-Usage: >>> AIC(ymod, ydata, yerr, k)
- ymod : Model data at same x-values as data. [array] (required)
-ydata : Data. [array] (required)
- yerr : Errors on data points. [array] (required)
-    k : Number of free parameters. [integer] (required)
+    :param ydata: list or array of y data points (float)
+    :param ymod: list or array of y model points (float)
+    :param yerr: list or array of errors on ydata (float)
+    :param Npars: number of fitting parameters (int)
+    :return:
     """
-    # Calculate Chi Square term from above function
-    chisq = redchisq(ydata, ymod, sd=yerr)
+    cond1 = ydata.size == ymod.size
+    cond2 = ydata.size == yerr.size
+    cond3 = ymod.size == yerr.size
 
-    # Calculate third term
-    numerator = 2 * k * (k + 1)
-    denominator = len(ydata) - k - 1
-    term = numerator / denominator
+    if (not cond1) or (not cond2) or (not cond3):
+        print "ydata.size == ymod.size:", cond1
+        print "ydata.size == yerr.size:", cond2
+        print "ymod.size == yerr.size:", cond3
+        raise ValueError("ydata, ymod and yerr should all be the same length")
 
-    # Calculate and return AIC
-    return chisq + (2 * k) + term
+    a = -1.0 * np.sum(((ydata - ymod) / yerr) ** 2.0)
+    b = 2.0 * Npars
+    c = ((2.0 * Npars) * (Npars + 1.0)) / (ydata.size - Npars - 1.0)
 
-
-def rel_llhood(aic_i, aic_min):
-    """
-This function calculates the relative likelihood of two models described by a
-corrected Akaike Information Criterion (see above function).
-
-Usage: >>> rel_llhood(AICcs, AICcmin)
-  aic_i : AICc value of model to be compared [float] (required)
-aic_min : minimum AICc value of potential models [float] (required)
-    """
-    return np.exp((aic_min - aic_i) / 2.0)
+    return a + b + c
