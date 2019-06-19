@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import sys
+import json
 import argparse
 import numpy as np
 import emcee as em
@@ -33,47 +34,66 @@ def parse_args():
         choices=["Humped", "Classic", "Sloped", "Stuttering"],
         help=""
     )
+    parser.add_argument(
+        "-s",
+        "--n-step",
+        type=int,
+        nargs="?",
+        help="Number of MCMC steps to take"
+    )
+    parser.add_argument(
+        "-w",
+        "--n-walk",
+        type=int,
+        nargs="?",
+        help="Number of ensemble walkers to deploy. Must be even!"
+    )
+    parser.add_argument(
+        "--re-run",
+        action="store_true",
+        help="Re-run an analysis by reading in MCMC parameters and random seed"
+    )
 
     return parser.parse_args()
 
 
 def create_filenames(GRB):
     # Data basename
-    basename = os.path.join("data", "synthetic_datasets")
-    if not os.path.exists(basename):
+    data_basename = os.path.join("data", "synthetic_datasets")
+    if not os.path.exists(data_basename):
         raise FileNotFoundError("Please make sure your chosen dataset exists.")
         sys.exit(1)
 
     # Directory name
-    dirname = os.path.join(basename, GRB)
-    if not os.path.exists(dirname):
+    data_dirname = os.path.join(data_basename, GRB)
+    if not os.path.exists(data_dirname):
         raise FileNotFoundError("Please make sure your chosen dataset exists.")
         sys.exit(1)
 
+    # Plot basename
+    plot_basename = os.path.join("plots", "synthetic_datasets")
+    if not os.path.exists(plot_basename):
+        os.makedirs(plot_basename)
+
+    # Plot directory name
+    plot_dirname = os.path.join(plot_basename, GRB)
+    if not os.path.exists(plot_dirname):
+        os.mkdir(plot_dirname)
+
     # Construct filenames
-    fdata = os.path.join(dirname, "{0}.csv".format(GRB))
-    fchain = os.path.join(dirname, "{0}_chain.csv".format(GRB))
-    fbad = os.path.join(dirname, "{0}_bad.csv".format(GRB))
-    fstat = os.path.join(dirname, "{0}_stats.txt")
-    fout = os.path.join(dirname, "{0}_out.txt".format(GRB))
+    fdata = os.path.join(data_dirname, "{0}.csv".format(GRB))
+    fchain = os.path.join(data_dirname, "{0}_chain.csv".format(GRB))
+    fbad = os.path.join(data_dirname, "{0}_bad.csv".format(GRB))
+    fstat = os.path.join(data_dirname, "{0}_stats.txt")
+    fout = os.path.join(data_dirname, "{0}_out.txt".format(GRB))
+    finfo = os.path.join(data_dirname, "{0}_info.json".format(GRB))
+    fplot = os.path.join(plot_dirname, "{0}_trace.png")
 
     # Initialise bad parameter file
     f = open(fbad, "w")
     f.close()
 
-    # Plot basename
-    basename = os.path.join("plots", "synthetic_datasets")
-    if not os.path.exists(basename):
-        os.mkdir(basename)
-
-    # Plot directory name
-    dirname = os.path.join(basename, GRB)
-    if not os.path.join(dirname):
-        os.mkdir(dirname)
-
-    fplot = os.path.join(dirname, "{0}_trace.png")
-
-    return fdata, fchain, fbad, fstat, fout, fplot, dirname
+    return fdata, fchain, fbad, fstat, fout, finfo, fplot, data_dirname
 
 
 def create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot):
@@ -101,11 +121,43 @@ def create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot):
 
 
 def main():
+    # Set random seed
+    seed = np.random.seed()
+
     # Parse command line arguments
     args = parse_args()
 
     # Build filenames
-    fdata, fchain, fbad, fstat, fout, fplot, fn = create_filenames(args.grb)
+    fdata, fchain, fbad, fstat, fout, finfo, fplot, fn = \
+        create_filenames(args.grb)
+
+    if args.re_run:
+        with open(finfo, "r") as stream:
+            mc_pars = json.load(stream)
+
+        # Set seed
+        np.random.seed(mc_pars["seed"])
+
+        # Retrieve MCMC parameters
+        Npars = mc_pars["Npars"]
+        Nstep = mc_pars["Nstep"]
+        Nwalk = mc_pars["Nwalk"]
+
+    else:
+        # MCMC parameters
+        Npars = 6            # Number of fitting parameters
+        Nwalk = args.n_walk  # Number of walkers
+        Nstep = args.n_step  # Number of MCMC steps
+
+        # Write MCMC parameters to JSON file
+        info = {
+            "Npars": Npars,
+            "Nwalk": Nwalk,
+            "Nstep": Nstep,
+            "seed": seed
+        }
+        with open(finfo, "w") as f:
+            json.dump(info, f)
 
     # Read in data
     data = pd.read_csv(fdata)
@@ -113,13 +165,8 @@ def main():
     y = data["y"]
     yerr = data["yerr"]
 
-    # MCMC parameters
-    Npars = 6      # Number of fitting parameters
-    Nwalk = 50     # Number of walkers
-    Nstep = 20000  # Number of MCMC steps
-
     # Calculate initial position
-    p0 = np.array(truths[GRB])
+    p0 = np.array(truths[args.grb])
     pos = [p0 + 1.e-4 * np.random.randn(Npars) for i in range(Nwalk)]
 
     # Initialise Ensemble Sampler
@@ -161,7 +208,7 @@ def main():
     body = """{0}
     Mean acceptance fraction: {1}
     Convergence ratios: {2}
-    """.format(GRB, np.mean(sampler.acceptance_fraction),
+    """.format(args.grb, np.mean(sampler.acceptance_fraction),
             conv(sampler.chain[:,Nburn:,:], Npars, Nwalk, Nstep))
     print(body)
     with open(fout, 'a') as f:
