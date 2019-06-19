@@ -18,6 +18,7 @@ I = 0.35 * M * R**2.0  # Moment of Inertia
 GM = G * M
 tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
 
+#==============================================================================#
 
 # Suppress lsoda warnings
 def fileno(file_or_fd):
@@ -45,7 +46,7 @@ def stdout_redirected(to=os.devnull, stdout=None):
             stdout.flush()
             os.dup2(copied.fileno(), stdout_fd)
 
-
+#==============================================================================#
 # Calculate initial conditions to pass to odeint
 def init_conds(MdiscI, P_i):
     """
