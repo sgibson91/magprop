@@ -13,19 +13,11 @@ pars : a list of parameters to be parsed to model_lum
    y : y-axis data to be fitted to (aray of floats)
 yerr : error on y-data (array of floats)
     """
-    arr = np.array(pars)         # Copy pars into array
-    arr[2:6] = 10.0 ** arr[2:6]  # Unlog required parameters
+    arr = np.array(pars)       # Copy pars into array
+    arr[2:] = 10.0 ** arr[2:]  # Unlog required parameters
 
     # Calculate model
-    if len(pars) == 6:
-        mod = model_lum(arr, x)
-    elif len(pars) == 7:
-        mod = model_lum(arr[:,6], f_beam=arr[6])
-    elif len(pars) == 8:
-        mod = model_lum(arr[:6], x, dipeff=arr[6], propeff=arr[7])
-    elif len(pars) == 9:
-        mod = model_lum(arr[:6], x, dipeff=arr[6], propeff=arr[7],
-	                f_beam=arr[8])
+    mod = model_lum(arr, xdata=x)
 
     if mod == 'flag':          # Flags models that break odeint
         return -1.0 * np.inf
@@ -33,7 +25,7 @@ yerr : error on y-data (array of floats)
         return -0.5 * np.sum(((y - mod) / yerr) ** 2.0)
 
 
-def lnprior(pars, u, l):
+def lnprior(pars):
     """
 Function to calculate the Prior probability function. Actually checks if
 parameters are within allowed range (l < pars < u), returns 0.0 if True, -inf
@@ -41,17 +33,23 @@ if False.
 
 Usage >>> lnprior(pars, u, l)
 pars : a list of parameters to be parsed to model_lum
-   u : upper limits for parameters (array of floats)
-   l : lower limits for parameters (array of floats)
+
+upper : upper limits for parameters (array of floats)
+lower : lower limits for parameters (array of floats)
     """
-    for i, par in enumerate(pars):
-        if (par > u[i]) or (par < l[i]):
-            return -1.0 * np.inf
+    upper = np.array([10.0, 10.0, -2.0, np.log10(2000.0), 2.0, 3.0])
+    lower = np.array([1.0e-3, 0.69, -6.0, np.log10(50.0), -2.0, -1.0])
 
-    return 0.0
+    upper_cond = pars <= upper
+    lower_cond = pars >= lower
+
+    if np.all(upper_cond) and np.all(lower_cond):
+        return 0.0
+    else:
+        return -np.inf
 
 
-def lnprob(pars, x, y, yerr, u, l, fbad):
+def lnprob(pars, x, y, yerr, fbad):
     """
 Function to calculate Posterior probability function. It checks that lnlike and
 lnprior have returned finite numbers and returns the summation of them. Any
@@ -62,16 +60,16 @@ pars : list of parameters to be parsed to model_lum
    x : x-axis data to be fitted to (array of floats)
    y : y-axis data to be fitted to (array of floats)
 yerr : error on y-data (array of floats)
-   u : parameter upper limits (array of floats)
-   l : parameter lower limits (array of floats)
 fbad : filename for bad parameter sets to be written to (string)
     """
-    lp = lnprior(pars, u, l)
+    # Calculate prior
+    lp = lnprior(pars)
     if not np.isfinite(lp):
         return -1.0 * np.inf
 
+    # Calculate likelihood
     ll = lnlike(pars, x, y, yerr)
-    if (not np.isfinite(ll)) and (fbad != None):
+    if (not np.isfinite(ll)) and (fbad is not None):
         with open(fbad, 'a') as f:
             for i, k in enumerate(pars):
                 if i == (len(pars)-1):
