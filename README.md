@@ -78,7 +78,7 @@ where:
 * `Nwalk` is the number of MCMC walkers to use, and
 * `Nstep` is the number of MCMC steps to take.
 
-This will use 4 threads to run 50 MCMC walkers for 20000 steps and optimise for 6 parameters: `B`, `P`, `MdiscI`, `RdiscI`, `epsilon` and `delta`.
+This will optimise for 6 parameters: `B`, `P`, `MdiscI`, `RdiscI`, `epsilon` and `delta`.
 Generated datafiles will be saved to `data/synthetic_datasets/<GRB-type>` and figures will be saved to `plots/synthetic_datasets/<GRB-type>`.
 
 If you need to re-run an anlysis with the same input random seed, parse the `--re-run` flag.
@@ -86,11 +86,11 @@ If you need to re-run an anlysis with the same input random seed, parse the `--r
 Once the MCMC is completed, then run the analysis script to generate figures and fitting statistics.
 
 ```
-python code/synthetic_datasets/plot_synthetic.py --grb <GRB-type> --n-burn
+python code/synthetic_datasets/plot_synthetic.py --grb <GRB-type> --n-burn <Nburn>
 ```
-where `--n-burn` is the number of steps to remove as burn-in.
+where `Nburn` is the number of steps to remove as burn-in.
 
-The optimal model will be saved to `data/synthetic_datasets/<GRB-type>/<GRB-type>_model.csv` and `plots/synthetic_datasets/<GRB-type>/<GRB-type>_model.png`.
+The optimal model will be saved to `data/synthetic_datasets/<GRB-type>/<GRB-type>_results.csv` and `plots/synthetic_datasets/<GRB-type>/<GRB-type>_model.png`.
 Another important file to check is `data/synthetic_datasets/<GRB-type>/<GRB-type>_stats.json` which will contain the optimised parameters and fitting statistics.
 
 ### Preparing the GRB samples
