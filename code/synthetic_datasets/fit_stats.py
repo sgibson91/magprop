@@ -1,3 +1,5 @@
+from __future__ import print_statement
+
 import numpy as np
 
 
@@ -48,9 +50,9 @@ ydata, ymod and yerr must all be of the same length.
     cond3 = ymod.size == yerr.size
 
     if (not cond1) or (not cond2) or (not cond3):
-        print "ydata.size == ymod.size:", cond1
-        print "ydata.size == yerr.size:", cond2
-        print "ymod.size == yerr.size:", cond3
+        print("ydata.size == ymod.size:", cond1)
+        print("ydata.size == yerr.size:", cond2)
+        print("ymod.size == yerr.size:", cond3)
         raise ValueError("ydata, ymod and yerr should all be the same length")
 
     a = -1.0 * np.sum(((ydata - ymod) / yerr) ** 2.0)
