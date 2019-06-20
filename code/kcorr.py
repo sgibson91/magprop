@@ -69,7 +69,7 @@ def main(args):
               "The type of GRB: L - long, S - short")
         sys.exit(2)
 
-    print("--> Loading the {0}GRB properties...".format(args.type))
+    print(f"--> Loading the {args.type}GRB properties...")
     grbs = kcorr_df.index.tolist()    # Get list of GRB names
 
     # Calculate the luminosity distance in cm and add to data frame
@@ -94,7 +94,7 @@ def main(args):
             sys.exit(2)
 
         # Read in GRB data file
-        print("--> Loading data for: {0}...".format(grb))
+        print(f"--> Loading data for: {grb}...")
         data = pd.read_csv(infile, index_col=False)
 
         # Perform k-correction
