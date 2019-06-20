@@ -121,9 +121,6 @@ def create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot):
 
 
 def main():
-    # Set random seed
-    seed = np.random.seed()
-
     # Parse command line arguments
     args = parse_args()
 
@@ -144,6 +141,9 @@ def main():
         Nwalk = mc_pars["Nwalk"]
 
     else:
+        # Get current seed
+        seed = np.random.get_state()[1][0]
+
         # MCMC parameters
         Npars = 6            # Number of fitting parameters
         Nwalk = args.n_walk  # Number of walkers
@@ -167,7 +167,7 @@ def main():
 
     # Calculate initial position
     p0 = np.array(truths[args.grb])
-    pos = [p0 + 1.e-4 * np.random.randn(Npars) for i in range(Nwalk)]
+    pos = [p0 + 1.0e-4 * np.random.randn(Npars) for i in range(Nwalk)]
 
     # Initialise Ensemble Sampler
     sampler = em.EnsembleSampler(Nwalk, Npars, lnprob, args=(x, y, yerr, fbad),
@@ -207,9 +207,7 @@ def main():
     # Acceptance fraction and convergence ratios
     body = """{0}
     Mean acceptance fraction: {1}
-    Convergence ratios: {2}
-    """.format(args.grb, np.mean(sampler.acceptance_fraction),
-            conv(sampler.chain[:,Nburn:,:], Npars, Nwalk, Nstep))
+    """.format(args.grb, np.mean(sampler.acceptance_fraction))
     print(body)
     with open(fout, 'a') as f:
         f.write(body)
