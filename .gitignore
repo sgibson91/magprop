@@ -1,3 +1,7 @@
+# Ignore generated files
+data/synthetic_datasets/
+plots/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -103,8 +107,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# Generated folders
-/plots
-
- # PyCharm Project files
+# PyCharm Project files
 .idea/
+
+# Ignore VSCode settings
+.vscode/
