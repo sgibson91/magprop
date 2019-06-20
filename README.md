@@ -90,7 +90,7 @@ python code/synthetic_datasets/plot_synthetic.py --grb <GRB-type> --n-burn <Nbur
 ```
 where `Nburn` is the number of steps to remove as burn-in.
 
-The optimal model will be saved to `data/synthetic_datasets/<GRB-type>/<GRB-type>_results.csv` and `plots/synthetic_datasets/<GRB-type>/<GRB-type>_model.png`.
+The optimal model will be saved to `data/synthetic_datasets/<GRB-type>/<GRB-type>_model.csv` and `plots/synthetic_datasets/<GRB-type>/<GRB-type>_model.png`.
 Another important file to check is `data/synthetic_datasets/<GRB-type>/<GRB-type>_stats.json` which will contain the optimised parameters and fitting statistics.
 
 ### Preparing the GRB samples
