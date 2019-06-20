@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import os
+import json
 import corner
 import argparse
 import numpy as np
@@ -64,11 +65,12 @@ def create_filenames(GRB):
     fdata = os.path.join(data_dirname, "{0}.csv".format(GRB))
     fchain = os.path.join(data_dirname, "{0}_chain.csv".format(GRB))
     fstats = os.path.join(data_dirname, "{0}_stats.txt".format(GRB))
-    fres = os.path.join(data_basename, "{0}_results.csv".format(GRB))
+    fres = os.path.join(data_dirname, "{0}_results.csv".format(GRB))
+    finfo = os.path.join(data_dirname, "{0}_info.json".format(GRB))
     fplot_corner = os.path.join(plot_dirname, "{0}_corner.png".format(GRB))
     fplot_model = os.path.join(plot_dirname, "{0}_model.png".format(GRB))
 
-    return fdata, fchain, fstats, fres, fplot_corner, fplot_model
+    return fdata, fchain, fstats, fres, finfo, fplot_corner, fplot_model
 
 
 def create_corner_plot(s, GRB, fplot):
@@ -107,7 +109,7 @@ def create_model_plot(model, data, GRB, fplot):
     ax.set_ylim(1.0e-8, 1.0e2)
     ax.tick_params(axis='both', which='major', labelsize=10)
     ax.set_xlabel(r'Time (s)', fontsize=12)
-    ax.set_ylabel(r'Luminosity $\left(10^{50}~{\rm erg}~{\rm s}^{-1}\right)$',
+    ax.set_ylabel(r'Luminosity $\left(10^{50} {\rm erg} {\rm s}^{-1}\right)$',
                 fontsize=12)
     ax.set_title(r'{0}'.format(GRB), fontsize=12)
 
@@ -121,16 +123,19 @@ def main():
     args = parse_args()
 
     # Create filenames
-    fdata, fchain, fstats, fres, fplot_corner, fplot_model = \
+    fdata, fchain, fstats, fres, finfo, fplot_corner, fplot_model = \
         create_filenames(args.grb)
+
+    # Read in MCMC parameters
+    with open(finfo, "r") as stream:
+        mc_pars = json.load(stream)
+
+    Npars = mc_pars["Npars"]
+    Nwalk = mc_pars["Nwalk"]
+    Nstep = mc_pars["Nstep"]
 
     # Read in data
     data = pd.read_csv(fdata)
-
-    # MCMC parameters
-    Npars = 6      # Number of fitting parameters
-    Nwalk = 50     # Number of walkers
-    Nstep = 20000  # Number of MCMC steps
 
     # Read in chain & probability and reshape
     cols = tuple(range(Npars))
@@ -193,7 +198,7 @@ Number of samples burned: {4}
 N = {1}
 k = {2}""".format(chisq, len(data["y"]), Npars)
 
-    chisq_r = redchisq(data["y"], data["ymod"], deg=Npars, sd=data["yerr"])
+    chisq_r = redchisq(data["y"], ymod, deg=Npars, sd=data["yerr"])
     body += "\nReduced Chi Square = {0:.3f}".format(chisq_r)
 
     body += ('\n\n{0}'.format(args.grb) + ' & $' +
@@ -253,7 +258,7 @@ log10(epsilon)->log10(delta): {14:.3f}
     print("Results written to: {0}".format(fstats))
 
     # Plot the smoothed model
-    create_filenames(fit, data, args.grb, fplot_model)
+    create_model_plot(fit, data, args.grb, fplot_model)
 
     # Write smoothed model to a file
     model = pd.DataFrame({
