@@ -64,8 +64,8 @@ def create_filenames(GRB):
     # Construct filenames
     fdata = os.path.join(data_dirname, "{0}.csv".format(GRB))
     fchain = os.path.join(data_dirname, "{0}_chain.csv".format(GRB))
-    fstats = os.path.join(data_dirname, "{0}_stats.txt".format(GRB))
-    fres = os.path.join(data_dirname, "{0}_results.csv".format(GRB))
+    fstats = os.path.join(data_dirname, "{0}_stats.json".format(GRB))
+    fres = os.path.join(data_dirname, "{0}_model.csv".format(GRB))
     finfo = os.path.join(data_dirname, "{0}_info.json".format(GRB))
     fplot_corner = os.path.join(plot_dirname, "{0}_corner.png".format(GRB))
     fplot_model = os.path.join(plot_dirname, "{0}_model.png".format(GRB))
@@ -142,14 +142,7 @@ def main():
     skip = (args.n_burn * Nwalk) + 1
     samples = np.loadtxt(fchain, delimiter=',', skiprows=1, usecols=cols)
 
-    body = """{0}
-
-MC Parameters:
-Npars: {1}
-Nwalk: {2}
-Nstep: {3}
-Number of samples burned: {4}
-""".format(args.grb, Npars, Nwalk, Nstep, args.n_burn)
+    stats = {"Nburn": args.n_burn}
 
     # Create corner plot
     create_corner_plot(samples, args.grb, fplot_corner)
@@ -161,6 +154,7 @@ Number of samples burned: {4}
         while j < Npars:
             corrs.append(np.corrcoef(samples[:,i], samples[:,j])[0,1])
             j += 1
+    stats["correlations"] = corrs
 
     # Results
     samples[:, 2:] = 10.0 ** samples[:, 2:]  # Convert out of log-space
@@ -171,90 +165,59 @@ Number of samples burned: {4}
     )
 
     pars = [B[0], P[0], Md[0], Rd[0], eps[0], delt[0]]
+    stats["pars"] = {
+        "B": B,
+        "P_i": P,
+        "MdiscI": Md,
+        "RdiscI": Rd,
+        "epsilon": eps,
+        "delta": delt,
+        "truths": truths[args.grb]
+    }
 
-    # Write results
-    body += """\nResults:
-           B (x10^15 G) = {0:.4f} (+{1:.4f}, -{2:.4f})\t(Truth: {3:.1f})
-                 P (ms) = {4:.3f} (+{5:.3f}, -{6:.3f})\t(Truth: {7:.1f})
-           Mdisc (Msol) = {8:.4} (+{9:.4}, -{10:.4})\t(Truth: {11:.6f})
-             Rdisc (km) = {12:.1f} (+{12:.1f}, -{14:.1f})\t(Truth: {15:.1f})
-                epsilon = {16:.2f} (+{17:.2f}, -{18:.2f})\t(Truth: {19:.2f})
-                  delta = {20:.4} (+{21:.4}, -{22:.4})\t(Truth: {23:.1f})
-""".format(B[0], B[1], B[2], truths[args.grb][0], P[0], P[1], P[2],
-           truths[args.grb][1], Md[0], Md[1], Md[2], 10.0**truths[args.grb][2],
-           Rd[0], Rd[1], Rd[2], 10.0**truths[args.grb][3], eps[0], eps[1],
-           eps[2], 10.0**truths[args.grb][4], delt[0], delt[1], delt[2],
-           10.0**truths[args.grb][5])
 
     # Calculate model and fit statistics and write to file
     ymod = model_lum(pars, xdata=data["x"])
     try:
         # Calculate AIC
         AIC = aicc(ymod, data["y"], data["yerr"], Npars)
-        body += "\nAIC = {0:.3f}".format(AIC)
+        stats["stats"] = {"aicc": AIC}
     except:
         chisq = redchisq(data["y"], ymod, sd=data["yerr"])
-        body += """\nChi Square = {0:.3f}
-N = {1}
-k = {2}""".format(chisq, len(data["y"]), Npars)
+        stats["stats"] = {"chi_square": chisq}
 
     chisq_r = redchisq(data["y"], ymod, deg=Npars, sd=data["yerr"])
-    body += "\nReduced Chi Square = {0:.3f}".format(chisq_r)
+    stats["stats"] = {"chi_square_red": chisq_r}
 
-    body += ('\n\n{0}'.format(args.grb) + ' & $' +
-             '{0}'.format(B[0]) + '^{+' +
-             '{0}'.format(B[1]) + '}_{-' +
-             '{0}'.format(B[2]) + '}$ & $' +
-             '{0}'.format(P[0]) + '^{+' +
-             '{0}'.format(P[1]) + '}_{-' +
-             '{0}'.format(P[2]) + '}$ & $' +
-             '{0}'.format(Md[0]) + '^{+' +
-             '{0}'.format(Md[1]) + '}_{-' +
-             '{0}'.format(Md[2]) + '}$ & $' +
-             '{0}'.format(Rd[0]) + '^{+' +
-             '{0}'.format(Rd[1]) + '}_{-' +
-             '{0}'.format(Rd[2]) + '}$ & $' +
-             '{0}'.format(eps[0]) + '^{+' +
-             '{0}'.format(eps[1]) + '}_{-' +
-             '{0}'.format(eps[2]) + '}$ & $' +
-             '{0}'.format(delt[0]) + '^{+' +
-             '{0}'.format(delt[1]) + '}_{-' +
-             '{0}'.format(delt[2]) + '}$ & $' +
-             '{0}'.format(chisq_r) + '$ \\\\ [2pt]')
-
-    try:
-        body += """\n\nCorrelations:
-             B->P: {0:.3f}
-     B->log10(Md): {1:.3f}
-     B->log10(Rd): {2:.3f}
-B->log10(epsilon): {3:.3f}
-  B->log10(delta): {4:.3f}
-
-     P->log10(Md): {5:.3f}
-     P->log10(Rd): {6:.3f}
-P->log10(epsilon): {7:.3f}
-  P->log10(delta): {8:.3f}
-
-     log10(Md)->log10(Rd): {9:.3f}
-log10(Md)->log10(epsilon): {10:.3f}
-  log10(Md)->log10(delta): {11:.3f}
-
-log10(Rd)->log10(epsilon): {12:.3f}
-  log10(Rd)->log10(delta): {13:.3f}
-
-log10(epsilon)->log10(delta): {14:.3f}
-""".format(corrs[0], corrs[1], corrs[2], corrs[3], corrs[4], corrs[5],
-           corrs[6], corrs[7], corrs[8], corrs[9], corrs[10], corrs[11],
-           corrs[12], corrs[13], corrs[14])
-    except:
-        pass
+    stats["latex"] = (
+        '\n\n{0}'.format(args.grb) + ' & $' +
+        '{0}'.format(B[0]) + '^{+' +
+        '{0}'.format(B[1]) + '}_{-' +
+        '{0}'.format(B[2]) + '}$ & $' +
+        '{0}'.format(P[0]) + '^{+' +
+        '{0}'.format(P[1]) + '}_{-' +
+        '{0}'.format(P[2]) + '}$ & $' +
+        '{0}'.format(Md[0]) + '^{+' +
+        '{0}'.format(Md[1]) + '}_{-' +
+        '{0}'.format(Md[2]) + '}$ & $' +
+        '{0}'.format(Rd[0]) + '^{+' +
+        '{0}'.format(Rd[1]) + '}_{-' +
+        '{0}'.format(Rd[2]) + '}$ & $' +
+        '{0}'.format(eps[0]) + '^{+' +
+        '{0}'.format(eps[1]) + '}_{-' +
+        '{0}'.format(eps[2]) + '}$ & $' +
+        '{0}'.format(delt[0]) + '^{+' +
+        '{0}'.format(delt[1]) + '}_{-' +
+        '{0}'.format(delt[2]) + '}$ & $' +
+        '{0}'.format(chisq_r) + '$ \\\\ [2pt]'
+    )
 
     # Smoothed model
     fit = model_lum(pars)
 
     # Write to a file
     with open(fstats, 'w') as f:
-        f.write(body)
+        json.dump(stats, f)
     print("Results written to: {0}".format(fstats))
 
     # Plot the smoothed model
