@@ -24,14 +24,14 @@ the chi square goodness-of-fit statstic.
     elif len(pars) == 7:
         ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, f_beam=pars[6])
     elif len(pars) == 8:
-        ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
-                        propeff=pars[7])
+        ymod = model_lc(
+            pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6], propeff=pars[7]
+
     elif len(pars) == 9:
-        ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
-                        propeff=pars[7], f_beam=pars[8])
-    else:
-        raise ValueError("len(pars) == {0} is not an accepted array length.\n\
-len(pars) must equal 6, 7, 8 or 9.".format(len(pars)))
+        ymod = model_lc(
+            pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
+            propeff=pars[7], f_beam=pars[8]
+        )
 
     # Return the log-likelihood
     return -0.5 * np.sum(((y - ymod) / yerr) ** 2.0)
