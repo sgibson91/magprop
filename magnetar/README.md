@@ -1,5 +1,37 @@
 # The Magnetar Python Library
 
+## `fit_stats.py`
+
+This script contains various statistical calculations used to verify the models created by the `funcs.py` script.
+
+### `redchisq`
+
+This function calculates the (reduced) chi square statistic of a model given input data.
+
+**Input variables:**
+* `ydata` - an array or list of the observed `y`-data
+* `ymod` - an array or list the modelled `y`-data
+
+**Optional variables:**
+* `deg` - the number of fitting parameters in the model (integer)
+* `sd` - a list or array of the uncertainties in `ydata`
+
+**Output variables:**
+* `chisq` - the (reduced) chi square goodness-of-fit statistic
+
+### `aicc`
+
+Function to calculate the corrected Akaike Information Criterion.
+
+**Input variables:**
+* `ydata` - list or array of observed `y`-data (float)
+* `ymod` - list or array of modelled `y`-data (float)
+* `yerr` - list or array of uncertainties on `ydata` (float)
+* `Npars` - number of free parameters (integer)
+
+**Output variables:**
+* `aicc` - AICc goodness-of-fit statistic (float)
+
 ## `funcs.py`
 
 This script contains all the functions and constants used to generate model light curves of Gamma-Ray Burst X-ray afterglows.
@@ -10,7 +42,7 @@ This function converts input values into appropriate units for the model.
 
 **Input variables:**
 * `MdiscI` - initial disc mass, solar masses
-* `P` - initial spin period, milliseconds
+* `P_i` - initial spin period, milliseconds
 
 **Output variables:**
 * `MdiscI` - initial disc mass, grams
@@ -45,11 +77,11 @@ If an array of time points is provided as `xdata`, the light curve is interpolat
 
 **Input variables:**
 
-* `pars` - an array or list containing the 6 core parameters: `B`, `P`, `MdiscI`, `RdiscI`, `epsilon`, `delta`
+* `pars` - an array or list containing the 6 core parameters: `B`, `P_i`, `MdiscI`, `RdiscI`, `epsilon`, `delta`
 
 **Optional variables:**
 
-* `xdata` - the time points of GRB data, default value = `None` 
+* `xdata` - the time points of GRB data, default value = `None`
 * `dipeff` - dipole energy-to-luminosity conversion efficiency, default value = 0.05
 * `propeff` - propeller energy-to-luminosity conversion efficiency, default value = 0.4
 * `f_beam` - beaming fraction, default value = 1.0
@@ -88,53 +120,6 @@ else:
 ```
 python magnetar/funcs.py -B 1.0 -P 1.0 -M 0.001 -R 100.0 -eps 1.0 -delt 1.0
 ```
-
-## `fit_stats.py`
-
-This script contains various statistical calculations used to verify the models created by the `funcs.py` script.
-
-### `redchisq`
-
-This function calculates the (reduced) chi square statistic of a model given input data.
-
-**Input variables:**
-* `ydata` - an array or list of the observed `y`-data
-* `ymod` - an array or list the modelled `y`-data
-
-**Optional variables:**
-* `deg` - the number of fitting parameters in the model (integer)
-* `sd` - a list or array of the uncertainties in `ydata`
-
-**Output variables:**
-* `chisq` - the (reduced) chi square goodness-of-fit statistic
-
-### `conv`
-
-This function calculates the convergence of a set of Monte Carlo Markov chains.
-
-**Input variables:**
-* `samples` - an array of shape `(Nc, Ns, N)` containing post-burn-in Monte Carlo samples
-* `N` - the number of fitting parameters (integer)
-* `Nc` - the number of Markov chains (integer)
-* `Ns` - the number of Monte Carlo steps (integer)
-
-**Output variables:**
-* `ratios` - an array of convergence ratios for each fitting parameter
-
-Chains are considered to have converged when the ratios `~1`
-
-### `aicc`
-
-Function to calculate the corrected Akaike Information Criterion.
-
-**Input variables:**
-* `ydata` - list or array of observed `y`-data (float)
-* `ymod` - list or array of modelled `y`-data (float)
-* `yerr` - list or array of uncertainties on `ydata` (float)
-* `Npars` - number of free parameters (integer)
-
-**Output variables:**
-* `aicc` - AICc goodness-of-fit statistic (float)
 
 ## `mcmc_eqns.py`
 
@@ -175,7 +160,7 @@ If this returns an infinite value, then the posterior also returns infinity and 
 **Input variables:**
 * `pars` - list or array of model parameters, to be parsed to `lnlike` and `lnprior`
 * `data` - data frame containing the observed GRB data, to be parsed to `lnlike`
-* `GRBtype` - string indicating the type of GRB, to be parsed to `lnlike` 
+* `GRBtype` - string indicating the type of GRB, to be parsed to `lnlike`
 
 **Optional variables:**
 * `custom_lims` - file path to CSV containing custom parameter limits, to be parsed to `lnprior`
@@ -193,4 +178,4 @@ The second column has the heading `lower` and contains the float numbers of the 
 
 The third column has the heading `upper` and contains the float numbers of the upper limits of the parameters.
 
-Any custom parameter limit file should follow this format. 
+Any custom parameter limit file should follow this format.
