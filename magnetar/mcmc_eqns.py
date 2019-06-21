@@ -26,7 +26,7 @@ the chi square goodness-of-fit statstic.
     elif len(pars) == 8:
         ymod = model_lc(
             pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6], propeff=pars[7]
-
+        )
     elif len(pars) == 9:
         ymod = model_lc(
             pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
