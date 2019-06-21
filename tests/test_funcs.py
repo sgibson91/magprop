@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.integrate import odeint
-from magnetar.funcs import *
-from magnetar.fit_stats import redchisq, aicc
+from magnetar import *
 
 
 ################################################################################
