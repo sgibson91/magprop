@@ -9,6 +9,7 @@ import emcee as em
 import pandas as pd
 import matplotlib.pyplot as plt
 from funcs import model_lum
+from multiprocessing import Pool
 from mcmc_eqns import lnprob, conv
 from matplotlib.ticker import MaxNLocator
 
@@ -98,19 +99,19 @@ def create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot):
     fig, axes = plt.subplots(Npars+1, 1, sharex=True, figsize=(6,8))
 
     for i in range(Nwalk):
-        axes[0].plot(range(Nstep), sampler.lnprobability[i,:], c='gray',
-                    alpha=0.4)
+        axes[0].plot(range(Nstep), sampler.get_log_prob()[:, i], c='gray',
+                     alpha=0.4)
     axes[0].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
     axes[0].tick_params(axis='both', which='major', labelsize=10)
     axes[0].set_ylabel('$\ln (p)$', fontsize=12)
 
     for i in range(Npars):
         for j in range(Nwalk):
-            axes[i+1].plot(range(Nstep), sampler.chain[j,:,i], c='gray',
-                        alpha=0.4)
-        axes[i+1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
-        axes[i+1].tick_params(axis='both', which='major', labelsize=10)
-        axes[i+1].set_ylabel(names[i], fontsize=12)
+            axes[i + 1].plot(range(Nstep), sampler.get_chain()[:, j, i],
+                             c='gray', alpha=0.4)
+        axes[i + 1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
+        axes[i + 1].tick_params(axis='both', which='major', labelsize=10)
+        axes[i + 1].set_ylabel(names[i], fontsize=12)
 
     axes[-1].set_xlabel('Model Number', fontsize=12)
     fig.tight_layout(h_pad=0.1)
@@ -164,12 +165,13 @@ def main():
     p0 = np.array(truths[args.grb])
     pos = [p0 + 1.0e-4 * np.random.randn(Npars) for i in range(Nwalk)]
 
-    # Initialise Ensemble Sampler
-    sampler = em.EnsembleSampler(Nwalk, Npars, lnprob, args=(x, y, yerr, fbad),
-                                 threads=3)
-
-    # Run MCMC
-    sampler.run_mcmc(pos, Nstep)
+    with Pool() as pool:  # context management
+        # Initialise Ensemble Sampler
+        sampler = em.EnsembleSampler(
+            Nwalk, Npars, lnprob, args=(x, y, yerr, fbad), pool=pool
+        )
+        # Run MCMC
+        sampler.run_mcmc(pos, Nstep, progress=True)
 
     # Write full MCMC to file
     with open(fchain, 'w') as f:
@@ -199,10 +201,16 @@ def main():
                 else:
                     f.write(f"{sampler.lnprobability[i,j]:.6f}, ")
 
-    # Acceptance fraction and convergence ratios
-    print(f"{args.grb}\n Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}")
+    # Acceptance fraction and autocorrelation time
+    tau = sampler.get_autocorr_time()
+    print(
+        f"{args.grb}\n" +
+        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}\n" +
+        f"Average auto-correlation time: {np.mean(tau):.3f}"
+    )
 
     info["acceptance_fraction"] = np.mean(sampler.acceptance_fraction)
+    info["tau"] = tau
     with open(finfo, "w") as f:
         json.dump(info, f)
 
