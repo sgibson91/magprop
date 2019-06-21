@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from funcs import model_lc
+from . import model_lc
 
 
 def lnlike(pars, data, GRBtype):
