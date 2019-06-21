@@ -24,6 +24,16 @@ names = ['$B$', '$P$', '$\log_{10} (M_{\\rm D,i})$', '$\log_{10} (R_{\\rm D})$',
          '$\log_{10} (\epsilon)$', '$\log_{10} (\delta)$']
 
 
+def sort_on_runtime(pos):
+    """
+Function to sort chain runtimes at execution.
+    """
+    p = np.atleast_2d(pos)
+    idx = np.argsort(p[:, 0])[::-1]
+
+    return p[idx], idx
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description=""
@@ -168,7 +178,8 @@ def main():
     with Pool() as pool:  # context management
         # Initialise Ensemble Sampler
         sampler = em.EnsembleSampler(
-            Nwalk, Npars, lnprob, args=(x, y, yerr, fbad), pool=pool
+            Nwalk, Npars, lnprob, args=(x, y, yerr, fbad), pool=pool,
+            runtime_sortingfn=sort_on_runtime
         )
         # Run MCMC
         sampler.run_mcmc(pos, Nstep, progress=True)
