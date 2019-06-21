@@ -22,7 +22,7 @@ DESCRIPTION = ("Suite of functions to model the emissions of a propellering "
 URL = 'https://github.com/sgibson91/magprop'
 EMAIL = 'sarah_gibson91@hotmail.co.uk'
 AUTHOR = 'Sarah L. Gibson'
-REQUIRES_PYTHON = '>=2.7'
+REQUIRES_PYTHON = '>=3.7'
 VERSION = None
 
 # What packages are required for this module to be executed?
@@ -90,7 +90,7 @@ class UploadCommand(Command):
         self.status('Pushing git tags…')
         os.system('git tag v{0}'.format(about['__version__']))
         os.system('git push --tags')
-        
+
         sys.exit()
 
 
@@ -121,8 +121,8 @@ setup(
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7'
     ],
     # $ setup.py publish support.
     cmdclass={

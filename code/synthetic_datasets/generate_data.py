@@ -17,14 +17,14 @@ GRBs = {
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Synthetic GRB type to create synthetic dataset for"
+        description="Create dataset for a synthetic GRB type"
     )
 
     parser.add_argument(
         "--grb",
         required=True,
         choices=["Humped", "Classic", "Sloped", "Stuttering"],
-        help="GRB type. Must be capitalised."
+        help="GRB type name"
     )
 
     return parser.parse_args()

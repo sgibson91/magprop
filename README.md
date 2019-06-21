@@ -1,23 +1,20 @@
-:construction: :construction: This repo uses Python 2.7 which will be [deprecated on 01/01/2020](https://legacy.python.org/dev/peps/pep-0373/#id4). The code needs checking for compatibility with and updating to Python 3. See [#38](https://github.com/sgibson91/magprop/issues/38) :construction: :construction:
-
 # Magnetar Propeller Model with Fallback Accretion
 
 Suite of code that models fallback accretion onto a magnetar and uses Markov Chain Monte Carlo to fit this to samples of Gamma-Ray Bursts.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/sgibson91/magprop.svg?branch=master)](https://travis-ci.org/sgibson91/magprop)
 
-- [Magnetar Propeller Model with Fallback Accretion](#magnetar-propeller-model-with-fallback-accretion)
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [Reproducing Model Figures 1-5](#reproducing-model-figures-1-5)
-    - [Running MCMC on Synthetic Datasets](#running-mcmc-on-synthetic-datasets)
-    - [Preparing the GRB samples](#preparing-the-grb-samples)
-    - [Binder](#binder)
-  - [Running Tests](#running-tests)
-  - [Citing this work](#citing-this-work)
-    - [Paper](#paper)
-    - [Citation](#citation)
-    - [License](#license)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Reproducing Model Figures 1-5](#reproducing-model-figures-1-5)
+  - [Running MCMC on Synthetic Datasets](#running-mcmc-on-synthetic-datasets)
+  - [Preparing the GRB samples](#preparing-the-grb-samples)
+  - [Binder](#binder)
+- [Running Tests](#running-tests)
+- [Citing this work](#citing-this-work)
+  - [Paper](#paper)
+  - [Citation](#citation)
+  - [License](#license)
 
 ---
 
@@ -150,7 +147,7 @@ Please quote the following citation when referring to this work.
 
 ### Paper
 
-* [*Fallback Accretion on to a Newborn Magnetar: Short GRBs with Extended Emission*](https://arxiv.org/abs/1706.04802)
+* [*Fallback Accretion on to a Newborn Magnetar: Short GRBs with Extended Emission*](https://arxiv.org/abs/1706.04802) [![DOI](https://img.shields.io/badge/DOI-10.1093%2Fmnras%2Fstx1531-blue.svg)](https://doi.org/10.1093/mnras/stx1531)
 
 ### Citation
 

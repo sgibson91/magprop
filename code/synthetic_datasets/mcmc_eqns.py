@@ -73,9 +73,9 @@ fbad : filename for bad parameter sets to be written to (string)
         with open(fbad, 'a') as f:
             for i, k in enumerate(pars):
                 if i == (len(pars)-1):
-                    f.write("{0}\n".format(k))
+                    f.write(f"{k}\n")
                 else:
-                    f.write("{0}, ".format(k))
+                    f.write(f"{k}, ")
         return -1.0 * np.inf
 
     return ll + lp

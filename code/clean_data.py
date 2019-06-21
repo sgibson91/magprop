@@ -8,7 +8,7 @@ sgrbs = ["050724", "051016B", "051227", "060614", "061006", "061210", "070714B",
          "150424A", "160410A"]
 
 # Change to data/SGRBS directory
-os.chdir("data/SGRBS")
+os.chdir(os.path.join("data", "SGRBS"))
 
 # Loop over sgrbs list and make a directory for each grb
 for grb in sgrbs:
@@ -31,4 +31,3 @@ for grb in sgrbs:
 
     # Write data frame to CSV file
     df.to_csv(outfile, index=False)
-

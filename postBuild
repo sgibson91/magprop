@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Activate kernel
-source activate kernel
-
 # Clean datasets
 python code/clean_data.py
 
