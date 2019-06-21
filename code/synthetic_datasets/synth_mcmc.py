@@ -9,8 +9,8 @@ import emcee as em
 import pandas as pd
 import matplotlib.pyplot as plt
 from funcs import model_lum
+from mcmc_eqns import lnprob
 from multiprocessing import Pool
-from mcmc_eqns import lnprob, conv
 from matplotlib.ticker import MaxNLocator
 
 truths = {
