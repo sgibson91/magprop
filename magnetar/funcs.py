@@ -136,8 +136,9 @@ parameters.
     elif GRBtype is None:
         tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
     else:
-        raise ValueError("Please provide a valid value for GRBtype.\n\
-Options are: L, S, or None.")
+        raise ValueError(
+            "Please provide a valid value for GRBtype.\nOptions are: L, S, or None."
+        )
 
     # Separate out parameters
     B, P, MdiscI, RdiscI, epsilon, delta = pars
@@ -222,28 +223,6 @@ Options are: L, S, or None.")
 def main(args):
     import matplotlib.pyplot as plt
 
-    # Check each "core" parameter is within a sensible range
-    if not ((args.B >= 1.0e-3) & (args.B <= 10.0)):
-        raise ValueError("Magnetic field strength should be between 10^-3 and \
-    10 x 10^15 G")
-
-    if not ((args.P >= 1.0e-3) & (args.P <= 10.0)):
-        raise ValueError("Initial spin period should be between 10^-3 and 10 \
-    milliseconds")
-
-    if not ((args.M >= 1.0e-5) & (args.M <= 0.1)):
-        raise ValueError("Initial disc mass should be between 10^-5 and 0.1 \
-    solar masses")
-
-    if not ((args.R >= 50.0) & (args.R <= 1500.0)):
-        raise ValueError("Disc radius should be between 50 and 1500 km")
-
-    if not ((args.eps >= 0.1) & (args.eps <= 100.0)):
-        raise ValueError("Epsilon should be between 0.1 and 100")
-
-    if not ((args.delt >= 1.0e-3) & (args.delt <= 1000.0)):
-        raise ValueError("Delta should be between 10^-3 and 10^3")
-
     # Construct parameter list
     pars = [args.B, args.P, args.M, args.R, args.eps, args.delt]
 
@@ -260,26 +239,57 @@ def main(args):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description="Script to generate a model "
-                                     "X-ray light curve for a gamma-ray burst "
-                                     "based on input parameters.")
+    parser = argparse.ArgumentParser(
+        description="Script to generate a model X-ray light curve for a gamma-ray burst based on input parameters."
+    )
 
     # Required arguments
-    parser.add_argument("-B", required=True, type=float,
-                        help="Magnetic field strength - 10^15 G")
-    parser.add_argument("-P", required=True, type=float,
-                        help="Initial spin period - milliseconds")
-    parser.add_argument("-M", required=True, type=float,
-                        help="Initial disc mass - solar masses")
-    parser.add_argument("-R", required=True, type=float,
-                        help="Disc radius - km")
-    parser.add_argument("-eps", required=True, type=float,
-                        help="Fallback timescale ratio (epsilon)")
-    parser.add_argument("-delt", required=True, type=float,
-                        help="Mass ratio (delta)")
+    parser.add_argument(
+        "-B",
+        required=True,
+        type=float,
+        choices=range(1.0-3, 10.001),
+        help="Magnetic field strength - 10^15 G"
+    )
+    parser.add_argument(
+        "-P",
+        required=True,
+        type=float,
+        choices=range(1.0e-3, 10.001),
+        help="Initial spin period - milliseconds"
+    )
+    parser.add_argument(
+        "-M",
+        required=True,
+        type=float,
+        choices=range(1.0e-5, 0.10001),
+        help="Initial disc mass - solar masses"
+    )
+    parser.add_argument(
+        "-R",
+        required=True,
+        type=float,
+        choices=range(50.0, 1500.1),
+        help="Disc radius - km"
+    )
+    parser.add_argument(
+        "-eps",
+        required=True,
+        type=float,
+        choices=range(0.1, 100.1),
+        help="Fallback timescale ratio (epsilon)"
+    )
+    parser.add_argument(
+        "-delt",
+        required=True,
+        type=float,
+        choices=range(1.0e-3, 1000.001),
+        help="Mass ratio (delta)"
+    )
 
     # TODO: Only work on this if you can think of a sensible way to combine
     # parameters without an endless nest of conditional statements
+    # 2019-06-21: argparse groups may be the answer
 
     # Optional arguments
     # parser.add_argument("--dipeff", type=float,
