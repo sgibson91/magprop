@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import json
 import argparse
+import warnings
 import numpy as np
 import emcee as em
 import pandas as pd
@@ -10,6 +11,8 @@ import matplotlib.pyplot as plt
 from magnetar import lnprob
 from multiprocessing import Pool
 from matplotlib.ticker import MaxNLocator
+
+warnings.filterwarnings("ignore")
 
 # Parameter names
 names = ['$B$', '$P$', '$\log_{10} (M_{\\rm D,i})$', '$\log_{10} (R_{\\rm D})$',
