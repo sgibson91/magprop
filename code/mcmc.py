@@ -193,6 +193,27 @@ def main():
         # Run MCMC
         sampler.run_mcmc(pos, Nstep, progress=True)
 
+    # Acceptance fraction and autocorrelation time
+    tau = sampler.get_autocorr_time()
+    print(
+        f"{args.grb}\n" +
+        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}\n" +
+        f"Average auto-correlation time: {np.mean(tau):.3f}"
+    )
+
+    if args.burn:
+        info["burn"] = {
+            "acceptance_fraction": np.mean(sampler.acceptance_fraction),
+            "tau": tau
+        }
+    else:
+        info["chain"] = {
+            "acceptance_fraction": np.mean(sampler.acceptance_fraction),
+            "tau": tau
+        }
+    with open(finfo, "w") as f:
+        json.dump(info, f)
+
 
 if __name__ == "__main__":
     main()
@@ -224,16 +245,6 @@ if __name__ == "__main__":
 #                 f.write("{0:.6f}\n".format(sampler.lnprobability[i,j]))
 #             else:
 #                 f.write("{0:.6f}, ".format(sampler.lnprobability[i,j]))
-
-# # Acceptance fraction and convergence ratios
-# body = """{0}
-# Mean acceptance fraction: {1}
-# Convergence ratios: {2}
-# """.format(tag, np.mean(sampler.acceptance_fraction),
-#            conv(sampler.chain[:,Nburn:,:], Npars, Nwalk, Nstep))
-# print body
-# with open(fout, 'a') as f:
-#     f.write(body)
 
 # #=== Plotting ===#
 # # Time series
