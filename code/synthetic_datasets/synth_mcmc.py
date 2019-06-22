@@ -184,9 +184,23 @@ def main():
         # Run MCMC
         sampler.run_mcmc(pos, Nstep, progress=True)
 
+        # Acceptance fraction and autocorrelation time
+    tau = sampler.get_autocorr_time()
+    print(
+        f"{args.grb}\n" +
+        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}\n" +
+        f"Average auto-correlation time: {np.mean(tau):.3f}"
+    )
+
+    info["acceptance_fraction"] = np.mean(sampler.acceptance_fraction)
+    info["tau"] = tau
+    with open(finfo, "w") as f:
+        json.dump(info, f)
+
+    filenames = ["B", "P", "Md", "Rd", "eps", "delt"]
+
     # Write full MCMC to file
     with open(fchain, 'w') as f:
-        f.write(f"{Npars}, {Nwalk}, {Nstep}\n")
         for j in range(Nstep):
             for i in range(Nwalk):
                 for k in range(Npars):
@@ -195,7 +209,7 @@ def main():
 
     # Write each individual parameter to it's own file
     for k in range(Npars):
-        with open(f"{fn}_{k}.csv", 'w') as f:
+        with open(f"{fn}_{filenames[k]}.csv", 'w') as f:
             for j in range(Nstep):
                 for i in range(Nwalk):
                     if i == (Nwalk-1):
@@ -211,19 +225,6 @@ def main():
                     f.write(f"{sampler.lnprobability[i, j]:.6f}\n")
                 else:
                     f.write(f"{sampler.lnprobability[i,j]:.6f}, ")
-
-    # Acceptance fraction and autocorrelation time
-    tau = sampler.get_autocorr_time()
-    print(
-        f"{args.grb}\n" +
-        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}\n" +
-        f"Average auto-correlation time: {np.mean(tau):.3f}"
-    )
-
-    info["acceptance_fraction"] = np.mean(sampler.acceptance_fraction)
-    info["tau"] = tau
-    with open(finfo, "w") as f:
-        json.dump(info, f)
 
     # Time series
     create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot)
