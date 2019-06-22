@@ -126,6 +126,37 @@ def create_filenames(args):
     return fdata, fstats, fchain, fplot, fn
 
 
+def write_output(sampler, Npars, Nstep, Nwalk, fchain, fn):
+    filenames = ["B", "P", "Md", "Rd", "eps", "delt"]
+
+    # Write full MCMC to file
+    with open(fchain, 'w') as f:
+        for j in range(Nstep):
+            for i in range(Nwalk):
+                for k in range(Npars):
+                    f.write(f"{sampler.chain[i, j, k]:.6f}, ")
+                f.write(f"{sampler.lnprobability[i,j]:.6f}\n")
+
+    # Write each individual parameter to it's own file
+    for k in range(Npars):
+        with open(f"{fn}_{filenames[k]}.csv", 'w') as f:
+            for j in range(Nstep):
+                for i in range(Nwalk):
+                    if i == (Nwalk-1):
+                        f.write(f"{sampler.chain[i, j, k]:.6f}\n")
+                    else:
+                        f.write(f"{sampler.chain[i, j, k]:.6f}, ")
+
+    # Write probability to it's own file
+    with open(f"{fn}_lnP.csv", 'w') as f:
+        for j in range(Nstep):
+            for i in range(Nwalk):
+                if i == (Nwalk-1):
+                    f.write(f"{sampler.lnprobability[i, j]:.6f}\n")
+                else:
+                    f.write(f"{sampler.lnprobability[i, j]:.6f}, ")
+
+
 def main():
     # Get command line args
     args = parse_args()
@@ -214,37 +245,12 @@ def main():
     with open(finfo, "w") as f:
         json.dump(info, f)
 
+    # Write output to files
+    write_output(sampler, Npars, Nstep, Nwalk, fchain, fn)
+
 
 if __name__ == "__main__":
     main()
-
-# # Write full MCMC to file
-# with open(fchain, 'w') as f:
-#     f.write("{0}, {1}, {2}\n".format(Npars, Nwalk, Nstep))
-#     for j in range(Nstep):
-#         for i in range(Nwalk):
-#             for k in range(Npars):
-#                 f.write("{0:.6f}, ".format(sampler.chain[i,j,k]))
-#             f.write("{0:.6f}\n".format(sampler.lnprobability[i,j]))
-
-# # Write each individual parameter to it's own file
-# for k in range(Npars):
-#     with open("{0}_walk_{1}.csv".format(fn, k), 'w') as f:
-#         for j in range(Nstep):
-#             for i in range(Nwalk):
-#                 if i == (Nwalk-1):
-#                     f.write("{0:.6f}\n".format(sampler.chain[i,j,k]))
-#                 else:
-#                     f.write("{0:.6f}, ".format(sampler.chain[i,j,k]))
-
-# # Write probability to it's own file
-# with open("{0}_walk_lnp.csv".format(fn), 'w') as f:
-#     for j in range(Nstep):
-#         for i in range(Nwalk):
-#             if i == (Nwalk-1):
-#                 f.write("{0:.6f}\n".format(sampler.lnprobability[i,j]))
-#             else:
-#                 f.write("{0:.6f}, ".format(sampler.lnprobability[i,j]))
 
 # #=== Plotting ===#
 # # Time series
