@@ -72,6 +72,12 @@ def parse_args():
         action="store_true",
         help=""
     )
+    parser.add_argument(
+        "-c",
+        "--custom-limits",
+        default=None,
+        help=""
+    )
 
     return parser.parse_args()
 
@@ -87,17 +93,17 @@ def create_filenames(args):
 
     # Construct filenames
     fdata = os.path.join(data_dir, f"{args.grb}_k.csv")
-    fbad = os.path.join(data_dir, f"{args.grb}_bad.csv")
-    fstats = os.path.join(data_dir, f"{args.grb}_stats.json")
+    fbad = os.path.join(data_dir, f"{args.grb}_{args.label}_bad.csv")
+    fstats = os.path.join(data_dir, f"{args.grb}_{args.label}_stats.json")
 
     if args.burn:
-        fchain = os.path.join(data_dir, f"{args.grb}_burn.csv")
-        fn = os.path.join(data_dir, f"{args.grb}_burn")
-        fplot = os.path.join(plot_dir, f"{args.grb}_burn_trace.png")
+        fchain = os.path.join(data_dir, f"{args.grb}_{args.label}_burn.csv")
+        fn = os.path.join(data_dir, f"{args.grb}_{args.label}_burn")
+        fplot = os.path.join(plot_dir, f"{args.grb}_{args.label}_burn_trace.png")
     else:
-        fchain = os.path.join(data_dir, f"{args.grb}_chain.csv")
-        fn = os.path.join(data_dir, f"{args.grb}_chain")
-        fplot = os.path.join(plot_dir, f"{args.grb}_chain_trace.png")
+        fchain = os.path.join(data_dir, f"{args.grb}_{args.label}_chain.csv")
+        fn = os.path.join(data_dir, f"{args.grb}_{args.label}_chain")
+        fplot = os.path.join(plot_dir, f"{args.grb}_{args.label}_chain_trace.png")
 
     # Initialise bad parameter file
     f = open(fbad, "w")
@@ -145,14 +151,26 @@ def main():
     # Read in data
     data = pd.read_csv(fdata)
 
+    # Initial position
+    if args.burn:
+
+        if args.custom_limits is not None:
+            mcmc_limits = pd.read_csv(args.custom_limits)
+        else:
+            mcmc_limits = pd.read_csv("magnetar/mcmc_limits.csv")
+
+        pos = [np.random.uniform(
+                   low=mcmc_limits["lower"].values[i],
+                   high=mcmc_limits["upper"].values[i],
+                   size=Nwalk
+               ) for i in range(Npars)]
+
+    else:
+        pos = np.loadtxt(f"{fn}_bestlnp.csv", delimiter=",")
+
 
 if __name__ == "__main__":
     main()
-
-
-# # Calculate initial position
-# p0 = np.array(truths[tag])
-# pos = [p0 + 1.e-4 * np.random.randn(Npars) for i in range(Nwalk)]
 
 # # Initialise Ensemble Sampler
 # sampler = em.EnsembleSampler(Nwalk, Npars, lnprob, args=(x, y, yerr, u[:Npars],
