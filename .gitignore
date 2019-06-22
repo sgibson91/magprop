@@ -1,5 +1,6 @@
 # Ignore generated files
 data/synthetic_datasets/
+data/SGRBS/
 plots/
 
 # Byte-compiled / optimized / DLL files
