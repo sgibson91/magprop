@@ -9,7 +9,8 @@ import emcee as em
 import pandas as pd
 import matplotlib.pyplot as plt
 from funcs import model_lum
-from mcmc_eqns import lnprob, conv
+from mcmc_eqns import lnprob
+from multiprocessing import Pool
 from matplotlib.ticker import MaxNLocator
 
 truths = {
@@ -21,6 +22,16 @@ truths = {
 
 names = ['$B$', '$P$', '$\log_{10} (M_{\\rm D,i})$', '$\log_{10} (R_{\\rm D})$',
          '$\log_{10} (\epsilon)$', '$\log_{10} (\delta)$']
+
+
+def sort_on_runtime(pos):
+    """
+Function to sort chain runtimes at execution.
+    """
+    p = np.atleast_2d(pos)
+    idx = np.argsort(p[:, 0])[::-1]
+
+    return p[idx], idx
 
 
 def parse_args():
@@ -81,38 +92,36 @@ def create_filenames(GRB):
         os.mkdir(plot_dirname)
 
     # Construct filenames
-    fdata = os.path.join(data_dirname, "{0}.csv".format(GRB))
-    fchain = os.path.join(data_dirname, "{0}_chain.csv".format(GRB))
-    fbad = os.path.join(data_dirname, "{0}_bad.csv".format(GRB))
-    fstat = os.path.join(data_dirname, "{0}_stats.txt")
-    fout = os.path.join(data_dirname, "{0}_out.txt".format(GRB))
-    finfo = os.path.join(data_dirname, "{0}_info.json".format(GRB))
-    fplot = os.path.join(plot_dirname, "{0}_trace.png")
+    fdata = os.path.join(data_dirname, f"{GRB}.csv")
+    fchain = os.path.join(data_dirname, f"{GRB}_chain.csv")
+    fbad = os.path.join(data_dirname, f"{GRB}_bad.csv")
+    finfo = os.path.join(data_dirname, f"{GRB}_info.json")
+    fplot = os.path.join(plot_dirname, f"{GRB}_trace.png")
 
     # Initialise bad parameter file
     f = open(fbad, "w")
     f.close()
 
-    return fdata, fchain, fbad, fstat, fout, finfo, fplot, data_dirname
+    return fdata, fchain, fbad, finfo, fplot, data_dirname
 
 
 def create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot):
     fig, axes = plt.subplots(Npars+1, 1, sharex=True, figsize=(6,8))
 
     for i in range(Nwalk):
-        axes[0].plot(range(Nstep), sampler.lnprobability[i,:], c='gray',
-                    alpha=0.4)
+        axes[0].plot(range(Nstep), sampler.get_log_prob()[:, i], c='gray',
+                     alpha=0.4)
     axes[0].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
     axes[0].tick_params(axis='both', which='major', labelsize=10)
     axes[0].set_ylabel('$\ln (p)$', fontsize=12)
 
     for i in range(Npars):
         for j in range(Nwalk):
-            axes[i+1].plot(range(Nstep), sampler.chain[j,:,i], c='gray',
-                        alpha=0.4)
-        axes[i+1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
-        axes[i+1].tick_params(axis='both', which='major', labelsize=10)
-        axes[i+1].set_ylabel(names[i], fontsize=12)
+            axes[i + 1].plot(range(Nstep), sampler.get_chain()[:, j, i],
+                             c='gray', alpha=0.4)
+        axes[i + 1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
+        axes[i + 1].tick_params(axis='both', which='major', labelsize=10)
+        axes[i + 1].set_ylabel(names[i], fontsize=12)
 
     axes[-1].set_xlabel('Model Number', fontsize=12)
     fig.tight_layout(h_pad=0.1)
@@ -125,8 +134,7 @@ def main():
     args = parse_args()
 
     # Build filenames
-    fdata, fchain, fbad, fstat, fout, finfo, fplot, fn = \
-        create_filenames(args.grb)
+    fdata, fchain, fbad, finfo, fplot, fn = create_filenames(args.grb)
 
     if args.re_run:
         with open(finfo, "r") as stream:
@@ -156,8 +164,6 @@ def main():
             "Nstep": Nstep,
             "seed": seed
         }
-        with open(finfo, "w") as f:
-            json.dump(info, f)
 
     # Read in data
     data = pd.read_csv(fdata)
@@ -169,48 +175,55 @@ def main():
     p0 = np.array(truths[args.grb])
     pos = [p0 + 1.0e-4 * np.random.randn(Npars) for i in range(Nwalk)]
 
-    # Initialise Ensemble Sampler
-    sampler = em.EnsembleSampler(Nwalk, Npars, lnprob, args=(x, y, yerr, fbad),
-                                 threads=3)
-
-    # Run MCMC
-    sampler.run_mcmc(pos, Nstep)
+    with Pool() as pool:  # context management
+        # Initialise Ensemble Sampler
+        sampler = em.EnsembleSampler(
+            Nwalk, Npars, lnprob, args=(x, y, yerr, fbad), pool=pool,
+            runtime_sortingfn=sort_on_runtime
+        )
+        # Run MCMC
+        sampler.run_mcmc(pos, Nstep, progress=True)
 
     # Write full MCMC to file
     with open(fchain, 'w') as f:
-        f.write("{0}, {1}, {2}\n".format(Npars, Nwalk, Nstep))
+        f.write(f"{Npars}, {Nwalk}, {Nstep}\n")
         for j in range(Nstep):
             for i in range(Nwalk):
                 for k in range(Npars):
-                    f.write("{0:.6f}, ".format(sampler.chain[i,j,k]))
-                f.write("{0:.6f}\n".format(sampler.lnprobability[i,j]))
+                    f.write(f"{sampler.chain[i, j, k]:.6f}, ")
+                f.write(f"{sampler.lnprobability[i, j]:.6f}\n")
 
     # Write each individual parameter to it's own file
     for k in range(Npars):
-        with open("{0}_{1}.csv".format(fn, k), 'w') as f:
+        with open(f"{fn}_{k}.csv", 'w') as f:
             for j in range(Nstep):
                 for i in range(Nwalk):
                     if i == (Nwalk-1):
-                        f.write("{0:.6f}\n".format(sampler.chain[i,j,k]))
+                        f.write(f"{sampler.chain[i, j, k]:.6f}\n")
                     else:
-                        f.write("{0:.6f}, ".format(sampler.chain[i,j,k]))
+                        f.write(f"{sampler.chain[i,j,k]:.6f}, ")
 
     # Write probability to it's own file
-    with open("{0}_lnp.csv".format(fn), 'w') as f:
+    with open(f"{fn}_lnp.csv", 'w') as f:
         for j in range(Nstep):
             for i in range(Nwalk):
                 if i == (Nwalk-1):
-                    f.write("{0:.6f}\n".format(sampler.lnprobability[i,j]))
+                    f.write(f"{sampler.lnprobability[i, j]:.6f}\n")
                 else:
-                    f.write("{0:.6f}, ".format(sampler.lnprobability[i,j]))
+                    f.write(f"{sampler.lnprobability[i,j]:.6f}, ")
 
-    # Acceptance fraction and convergence ratios
-    body = """{0}
-    Mean acceptance fraction: {1}
-    """.format(args.grb, np.mean(sampler.acceptance_fraction))
-    print(body)
-    with open(fout, 'a') as f:
-        f.write(body)
+    # Acceptance fraction and autocorrelation time
+    tau = sampler.get_autocorr_time()
+    print(
+        f"{args.grb}\n" +
+        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}\n" +
+        f"Average auto-correlation time: {np.mean(tau):.3f}"
+    )
+
+    info["acceptance_fraction"] = np.mean(sampler.acceptance_fraction)
+    info["tau"] = tau
+    with open(finfo, "w") as f:
+        json.dump(info, f)
 
     # Time series
     create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot)

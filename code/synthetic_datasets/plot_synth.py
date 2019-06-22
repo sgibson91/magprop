@@ -62,13 +62,13 @@ def create_filenames(GRB):
         os.mkdir(plot_dirname)
 
     # Construct filenames
-    fdata = os.path.join(data_dirname, "{0}.csv".format(GRB))
-    fchain = os.path.join(data_dirname, "{0}_chain.csv".format(GRB))
-    fstats = os.path.join(data_dirname, "{0}_stats.json".format(GRB))
-    fres = os.path.join(data_dirname, "{0}_model.csv".format(GRB))
-    finfo = os.path.join(data_dirname, "{0}_info.json".format(GRB))
-    fplot_corner = os.path.join(plot_dirname, "{0}_corner.png".format(GRB))
-    fplot_model = os.path.join(plot_dirname, "{0}_model.png".format(GRB))
+    fdata = os.path.join(data_dirname, f"{GRB}.csv")
+    fchain = os.path.join(data_dirname, f"{GRB}_chain.csv")
+    fstats = os.path.join(data_dirname, f"{GRB}_stats.json")
+    fres = os.path.join(data_dirname, f"{GRB}_model.csv")
+    finfo = os.path.join(data_dirname, f"{GRB}_info.json")
+    fplot_corner = os.path.join(plot_dirname, f"{GRB}_corner.png")
+    fplot_model = os.path.join(plot_dirname, f"{GRB}_model.png")
 
     return fdata, fchain, fstats, fres, finfo, fplot_corner, fplot_model
 
@@ -190,26 +190,16 @@ def main():
     stats["stats"] = {"chi_square_red": chisq_r}
 
     stats["latex"] = (
-        '\n\n{0}'.format(args.grb) + ' & $' +
-        '{0}'.format(B[0]) + '^{+' +
-        '{0}'.format(B[1]) + '}_{-' +
-        '{0}'.format(B[2]) + '}$ & $' +
-        '{0}'.format(P[0]) + '^{+' +
-        '{0}'.format(P[1]) + '}_{-' +
-        '{0}'.format(P[2]) + '}$ & $' +
-        '{0}'.format(Md[0]) + '^{+' +
-        '{0}'.format(Md[1]) + '}_{-' +
-        '{0}'.format(Md[2]) + '}$ & $' +
-        '{0}'.format(Rd[0]) + '^{+' +
-        '{0}'.format(Rd[1]) + '}_{-' +
-        '{0}'.format(Rd[2]) + '}$ & $' +
-        '{0}'.format(eps[0]) + '^{+' +
-        '{0}'.format(eps[1]) + '}_{-' +
-        '{0}'.format(eps[2]) + '}$ & $' +
-        '{0}'.format(delt[0]) + '^{+' +
-        '{0}'.format(delt[1]) + '}_{-' +
-        '{0}'.format(delt[2]) + '}$ & $' +
-        '{0}'.format(chisq_r) + '$ \\\\ [2pt]'
+        f'\n\n{args.grb}' + ' & $' + f'{B[0]}' + '^{+' +
+        f'{B[1]}' + '}_{-' + f'{B[2]}' + '}$ & $' +
+        f'{P[0]}' + '^{+' + f'{P[1]}' + '}_{-' +
+        f'{P[2]}' + '}$ & $' + f'{Md[0]}' + '^{+' +
+        f'{Md[1]}' + '}_{-' + f'{Md[2]}' + '}$ & $' +
+        f'{Rd[0]}' + '^{+' + f'{Rd[1]}' + '}_{-' +
+        f'{Rd[2]}' + '}$ & $' + f'{eps[0]}' + '^{+' +
+        f'{eps[1]}' + '}_{-' + f'{eps[2]}' + '}$ & $' +
+        f'{delt[0]}' + '^{+' + f'{delt[1]}' + '}_{-' +
+        f'{delt[2]}' + '}$ & $' + f'{chisq_r}' + '$ \\\\ [2pt]'
     )
 
     # Smoothed model
@@ -218,7 +208,7 @@ def main():
     # Write to a file
     with open(fstats, 'w') as f:
         json.dump(stats, f)
-    print("Results written to: {0}".format(fstats))
+    print(f"Results written to: {fstats}")
 
     # Plot the smoothed model
     create_model_plot(fit, data, args.grb, fplot_model)
