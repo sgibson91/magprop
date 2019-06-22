@@ -269,7 +269,7 @@ def main():
             "acceptance_fraction": sampler.acceptance_fraction,
             "tau": sampler.get_autocorr_time()
         }
-    with open(finfo, "w") as f:
+    with open(fstats, "w") as f:
         json.dump(info, f)
 
     # Write output to files
