@@ -112,13 +112,39 @@ def main():
     # Create filenames
     fdata, fbad, fstats, fchain, fplot, fn = create_filenames(args)
 
+    if args.re_run:
+        # Load info file
+        with open(fstats, "r") as stream:
+            mc_pars = json.load(stream)
+
+        # Set random seed
+        np.random.seed(mc_pars["seed"])
+
+        # Set MCMC parameters
+        Npars = mc_pars["Npars"]
+        Nstep = mc_pars["Nstep"]
+        Nwalk = mc_pars["Nwalk"]
+
+    else:
+        # Retrieve random seed
+        seed = np.random.get_state()[1][0]
+
+        # MCMC parameters
+        Npars = args.n_pars
+        Nstep = args.n_step
+        Nwalk = args.n_walk
+
+        info = {
+            "seed": seed,
+            "Npars": Npars,
+            "Nstep": Nstep,
+            "Nwalk": Nwalk
+        }
+
 
 if __name__ == "__main__":
     main()
 
-
-# f = open(fbad, 'w')
-# f.close()
 
 # # Read in data
 # data = np.loadtxt(fdata)
@@ -126,12 +152,6 @@ if __name__ == "__main__":
 # x = data[:,0]
 # y = data[:,1]
 # yerr = data[:,2]
-
-# # MCMC parameters
-# Npars = 6      # Number of fitting parameters
-# Nwalk = 50     # Number of walkers
-# Nstep = 20000  # Number of MCMC steps
-# Nburn = 500    # Number of burn-in steps to be removed
 
 # # Calculate initial position
 # p0 = np.array(truths[tag])
