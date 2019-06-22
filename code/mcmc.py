@@ -8,11 +8,22 @@ import emcee as em
 import pandas as pd
 import matplotlib.pyplot as plt
 from magnetar import lnprob
+from multiprocessing import Pool
 from matplotlib.ticker import MaxNLocator
 
 # Parameter names
 names = ['$B$', '$P$', '$\log_{10} (M_{\\rm D,i})$', '$\log_{10} (R_{\\rm D})$',
          '$\log_{10} (\epsilon)$', '$\log_{10} (\delta)$']
+
+
+def sort_on_runtime(pos):
+    """
+Function to sort chain runtimes at execution.
+    """
+    p = np.atleast_2d(pos)
+    idx = np.argsort(p[:, 0])[::-1]
+
+    return p[idx], idx
 
 
 def parse_args():
@@ -79,6 +90,13 @@ def parse_args():
         default=None,
         help="Path to a CSV file containing custom parameter limits"
     )
+    parser.add_argument(
+        "-d",
+        "--n-threads",
+        type=int,
+        default=4,
+        help="Number of threads to parallelise across"
+    )
 
     return parser.parse_args()
 
@@ -94,7 +112,6 @@ def create_filenames(args):
 
     # Construct filenames
     fdata = os.path.join(data_dir, f"{args.grb}_k.csv")
-    fbad = os.path.join(data_dir, f"{args.grb}_{args.label}_bad.csv")
     fstats = os.path.join(data_dir, f"{args.grb}_{args.label}_stats.json")
 
     if args.burn:
@@ -106,11 +123,7 @@ def create_filenames(args):
         fn = os.path.join(data_dir, f"{args.grb}_{args.label}_chain")
         fplot = os.path.join(plot_dir, f"{args.grb}_{args.label}_chain_trace.png")
 
-    # Initialise bad parameter file
-    f = open(fbad, "w")
-    f.close()
-
-    return fdata, fbad, fstats, fchain, fplot, fn
+    return fdata, fstats, fchain, fplot, fn
 
 
 def main():
@@ -118,7 +131,7 @@ def main():
     args = parse_args()
 
     # Create filenames
-    fdata, fbad, fstats, fchain, fplot, fn = create_filenames(args)
+    fdata, fstats, fchain, fplot, fn = create_filenames(args)
 
     if args.re_run:
         # Load info file
@@ -160,25 +173,29 @@ def main():
         else:
             mcmc_limits = pd.read_csv("magnetar/mcmc_limits.csv")
 
-        pos = [np.random.uniform(
-                   low=mcmc_limits["lower"].values[i],
-                   high=mcmc_limits["upper"].values[i],
-                   size=Nwalk
-               ) for i in range(Npars)]
+        pos = np.ndarray((Nwalk, Npars))
+        for i in range(Npars):
+            pos[:, i] = np.random.uniform(
+                low=mcmc_limits["lower"].values[i],
+                high=mcmc_limits["upper"].values[i],
+                size=Nwalk
+            )
 
     else:
         pos = np.loadtxt(f"{fn}_bestlnp.csv", delimiter=",")
 
+    with Pool(args.n_threads) as pool:  # context management
+        # Initialise the sampler
+        sampler = sampler = em.EnsembleSampler(
+            Nwalk, Npars, lnprob, args=(data, args.type), pool=pool,
+            runtime_sortingfn=sort_on_runtime
+        )
+        # Run MCMC
+        sampler.run_mcmc(pos, Nstep, progress=True)
+
 
 if __name__ == "__main__":
     main()
-
-# # Initialise Ensemble Sampler
-# sampler = em.EnsembleSampler(Nwalk, Npars, lnprob, args=(x, y, yerr, u[:Npars],
-#                              l[:Npars], fbad), threads=3)
-
-# # Run MCMC
-# sampler.run_mcmc(pos, Nstep)
 
 # # Write full MCMC to file
 # with open(fchain, 'w') as f:
