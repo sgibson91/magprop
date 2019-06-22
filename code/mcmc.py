@@ -17,7 +17,7 @@ names = ['$B$', '$P$', '$\log_{10} (M_{\\rm D,i})$', '$\log_{10} (R_{\\rm D})$',
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description=""
+        description="Script to optimise the magnetar model to GRB data using MCMC"
     )
 
     parser.add_argument(
@@ -26,57 +26,58 @@ def parse_args():
         required=True,
         type=str,
         choices=["L", "S"],
-        help=""
+        help="GRB type"
     )
     parser.add_argument(
         "--grb",
         required=True,
         type=str,
-        help=""
+        help="GRB name. Format YYMMDD[:ABC:]."
     )
     parser.add_argument(
         "-l",
         "--label",
         required=True,
         type=str,
-        help=""
+        help="MCMC run label for provenance"
     )
     parser.add_argument(
         "-p",
         "--n-pars",
         type=int,
+        choices=[6, 7, 8, 9],
         nargs="?",
-        help=""
+        help="Number of parameters to optimise for"
     )
     parser.add_argument(
         "-s",
         "--n-step",
         type=int,
         nargs="?",
-        help=""
+        help="Number os MCMC steps to take"
     )
     parser.add_argument(
         "-w",
         "--n-walk",
         type=int,
         nargs="?",
-        help=""
+        help="Number of ensemble walkers to deploy"
     )
     parser.add_argument(
         "--burn",
         action="store_true",
-        help=""
+        help="Parse this flag if it is a burn-in run"
     )
     parser.add_argument(
         "--re-run",
         action="store_true",
-        help=""
+        help="Parse this flag to re-fun a previous analysis"
     )
     parser.add_argument(
         "-c",
         "--custom-limits",
         default=None,
-        help=""
+        help="Path to a CSV file containing custom parameter limits"
     )
 
     return parser.parse_args()
