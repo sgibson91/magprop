@@ -141,6 +141,9 @@ def main():
             "Nwalk": Nwalk
         }
 
+    # Read in data
+    data = pd.read_csv(fdata, index=False)
+
 
 if __name__ == "__main__":
     main()
