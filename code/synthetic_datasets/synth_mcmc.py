@@ -94,15 +94,10 @@ def create_filenames(GRB):
     # Construct filenames
     fdata = os.path.join(data_dirname, f"{GRB}.csv")
     fchain = os.path.join(data_dirname, f"{GRB}_chain.csv")
-    fbad = os.path.join(data_dirname, f"{GRB}_bad.csv")
     finfo = os.path.join(data_dirname, f"{GRB}_info.json")
     fplot = os.path.join(plot_dirname, f"{GRB}_trace.png")
 
-    # Initialise bad parameter file
-    f = open(fbad, "w")
-    f.close()
-
-    return fdata, fchain, fbad, finfo, fplot, data_dirname
+    return fdata, fchain, finfo, fplot, data_dirname
 
 
 def create_trace_plot(sampler, Npars, Nstep, Nwalk, fplot):
@@ -134,7 +129,7 @@ def main():
     args = parse_args()
 
     # Build filenames
-    fdata, fchain, fbad, finfo, fplot, fn = create_filenames(args.grb)
+    fdata, fchain, finfo, fplot, fn = create_filenames(args.grb)
 
     if args.re_run:
         with open(finfo, "r") as stream:
@@ -178,7 +173,7 @@ def main():
     with Pool() as pool:  # context management
         # Initialise Ensemble Sampler
         sampler = em.EnsembleSampler(
-            Nwalk, Npars, lnprob, args=(x, y, yerr, fbad), pool=pool,
+            Nwalk, Npars, lnprob, args=(x, y, yerr), pool=pool,
             runtime_sortingfn=sort_on_runtime
         )
         # Run MCMC
