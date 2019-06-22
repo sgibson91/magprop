@@ -5,6 +5,7 @@ import json
 import argparse
 import numpy as np
 import emcee as em
+import pandas as pd
 import matplotlib.pyplot as plt
 from magnetar import lnprob
 from matplotlib.ticker import MaxNLocator
@@ -142,19 +143,12 @@ def main():
         }
 
     # Read in data
-    data = pd.read_csv(fdata, index=False)
+    data = pd.read_csv(fdata)
 
 
 if __name__ == "__main__":
     main()
 
-
-# # Read in data
-# data = np.loadtxt(fdata)
-# data = data[np.argsort(data[:,0])]
-# x = data[:,0]
-# y = data[:,1]
-# yerr = data[:,2]
 
 # # Calculate initial position
 # p0 = np.array(truths[tag])
