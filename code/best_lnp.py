@@ -70,6 +70,7 @@ def main():
         header=None,
         names=["B", "P", "Md", "Rd", "eps", "delt", "lnprob"]
     )
+    print(np.sort(np.unique(data["lnprob"])))
 
 
 if __name__ == "__main__":
