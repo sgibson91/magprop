@@ -131,30 +131,55 @@ def write_output(sampler, Npars, Nstep, Nwalk, fchain, fn):
 
     # Write full MCMC to file
     with open(fchain, 'w') as f:
-        for j in range(Nstep):
-            for i in range(Nwalk):
+        for i in range(Nstep):
+            for j in range(Nwalk):
                 for k in range(Npars):
-                    f.write(f"{sampler.chain[i, j, k]:.6f}, ")
-                f.write(f"{sampler.lnprobability[i,j]:.6f}\n")
+                    f.write(f"{sampler.get_chain()[i, j, k]:.6f}, ")
+                f.write(f"{sampler.get_log_prob()[i, j]:.6f}\n")
 
     # Write each individual parameter to it's own file
     for k in range(Npars):
         with open(f"{fn}_{filenames[k]}.csv", 'w') as f:
-            for j in range(Nstep):
-                for i in range(Nwalk):
-                    if i == (Nwalk-1):
-                        f.write(f"{sampler.chain[i, j, k]:.6f}\n")
+            for i in range(Nstep):
+                for j in range(Nwalk):
+                    if j == (Nwalk - 1):
+                        f.write(f"{sampler.get_chain()[i, j, k]:.6f}\n")
                     else:
-                        f.write(f"{sampler.chain[i, j, k]:.6f}, ")
+                        f.write(f"{sampler.get_chain()[i, j, k]:.6f}, ")
 
     # Write probability to it's own file
     with open(f"{fn}_lnP.csv", 'w') as f:
-        for j in range(Nstep):
-            for i in range(Nwalk):
-                if i == (Nwalk-1):
-                    f.write(f"{sampler.lnprobability[i, j]:.6f}\n")
+        for i in range(Nstep):
+            for j in range(Nwalk):
+                if j == (Nwalk - 1):
+                    f.write(f"{sampler.get_log_prob()[i, j]:.6f}\n")
                 else:
-                    f.write(f"{sampler.lnprobability[i, j]:.6f}, ")
+                    f.write(f"{sampler.get_log_prob()[i, j]:.6f}, ")
+
+
+def create_trace(sampler, Npars, Nstep, Nwalk, fplot):
+    # Time series
+    fig, axes = plt.subplots(Npars + 1, 1, sharex=True, figsize=(6, 8))
+
+    for i in range(Nwalk):
+        axes[0].plot(range(Nstep), sampler.get_log_prob()[:, i], c='gray',
+                    alpha=0.4)
+    axes[0].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
+    axes[0].tick_params(axis='both', which='major', labelsize=10)
+    axes[0].set_ylabel('$\ln (p)$', fontsize=12)
+
+    for k in range(Npars):
+        for j in range(Nwalk):
+            axes[i + 1].plot(range(Nstep), sampler.get_chain()[:, j, k],
+                             c='gray', alpha=0.4)
+        axes[i + 1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
+        axes[i + 1].tick_params(axis='both', which='major', labelsize=10)
+        axes[i + 1].set_ylabel(names[k], fontsize=12)
+
+    axes[-1].set_xlabel('Model Number', fontsize=12)
+    fig.tight_layout(h_pad=0.1)
+    fig.savefig(f"{fplot}")
+    plt.clf()
 
 
 def main():
@@ -225,22 +250,21 @@ def main():
         sampler.run_mcmc(pos, Nstep, progress=True)
 
     # Acceptance fraction and autocorrelation time
-    tau = sampler.get_autocorr_time()
     print(
         f"{args.grb}\n" +
-        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}\n" +
-        f"Average auto-correlation time: {np.mean(tau):.3f}"
+        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction):.3f}\n" +
+        f"Average auto-correlation time: {np.mean(sampler.get_autocorr_time()):.3f}"
     )
 
     if args.burn:
         info["burn"] = {
-            "acceptance_fraction": np.mean(sampler.acceptance_fraction),
-            "tau": tau
+            "acceptance_fraction": sampler.acceptance_fraction,
+            "tau": sampler.get_autocorr_time()
         }
     else:
         info["chain"] = {
-            "acceptance_fraction": np.mean(sampler.acceptance_fraction),
-            "tau": tau
+            "acceptance_fraction": sampler.acceptance_fraction,
+            "tau": sampler.get_autocorr_time()
         }
     with open(finfo, "w") as f:
         json.dump(info, f)
@@ -248,30 +272,9 @@ def main():
     # Write output to files
     write_output(sampler, Npars, Nstep, Nwalk, fchain, fn)
 
+    # Create trace plot
+    create_trace(sampler, Npars, Nstep, Nwalk, fplot)
+
 
 if __name__ == "__main__":
     main()
-
-# #=== Plotting ===#
-# # Time series
-# fig, axes = plt.subplots(Npars+1, 1, sharex=True, figsize=(6,8))
-
-# for i in range(Nwalk):
-#     axes[0].plot(range(Nstep), sampler.lnprobability[i,:], c='gray',
-#                  alpha=0.4)
-# axes[0].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
-# axes[0].tick_params(axis='both', which='major', labelsize=10)
-# axes[0].set_ylabel('$\ln (p)$', fontsize=12)
-
-# for i in range(Npars):
-#     for j in range(Nwalk):
-#         axes[i+1].plot(range(Nstep), sampler.chain[j,:,i], c='gray',
-#                        alpha=0.4)
-#     axes[i+1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
-#     axes[i+1].tick_params(axis='both', which='major', labelsize=10)
-#     axes[i+1].set_ylabel(names[i], fontsize=12)
-
-# axes[-1].set_xlabel('Model Number', fontsize=12)
-# fig.tight_layout(h_pad=0.1)
-# fig.savefig('{0}_timeseries.png'.format(fn), dpi=720)
-# plt.clf()
