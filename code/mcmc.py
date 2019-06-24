@@ -207,7 +207,7 @@ def main():
 
     else:
         # Retrieve random seed
-        seed = np.random.get_state()[1][0]
+        seed = int(np.random.get_state()[1][0])
 
         # MCMC parameters
         Npars = args.n_pars
