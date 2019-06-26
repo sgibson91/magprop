@@ -261,13 +261,13 @@ def main():
 
     if args.burn:
         info["burn"] = {
-            "acceptance_fraction": sampler.acceptance_fraction,
-            "tau": sampler.get_autocorr_time()
+            "mean_acceptance_fraction": np.mean(sampler.acceptance_fraction),
+            "mean_autocorr_time": np.mean(sampler.get_autocorr_time())
         }
     else:
         info["chain"] = {
-            "acceptance_fraction": sampler.acceptance_fraction,
-            "tau": sampler.get_autocorr_time()
+            "mean_acceptance_fraction": np.mean(sampler.acceptance_fraction),
+            "mean_autocorr_time": np.mean(sampler.get_autocorr_time())
         }
     with open(fstats, "w") as f:
         json.dump(info, f)
