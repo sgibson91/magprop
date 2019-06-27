@@ -26,11 +26,11 @@ period in milliseconds into an angular frequency.
     Mdisc0 = MdiscI * Msol                 # Disc mass
     omega0 = (2.0 * np.pi) / (1.0e-3 * P)  # Angular frequency
 
-    return np.array([Mdisc0, omega0])
+    return Mdisc0, omega0
 
 
 # Model to be passed to odeint to calculate Mdisc and omega
-def odes(y, t, B, MdiscI, RdiscI, epsilon, delta, n=1.0, alpha=0.1, cs7=1.0,
+def odes(init, t, B, MdiscI, RdiscI, epsilon, delta, n=1.0, alpha=0.1, cs7=1.0,
          k=0.9):
     """
 Function to be passed to ODEINT to calculate the disc mass and angular frequency
@@ -51,7 +51,7 @@ over time.
              by ODEINT
     """
     # Initial conditions
-    Mdisc, omega = y
+    Mdisc, omega = init
 
     # Constants
     Rdisc = RdiscI * 1.0e5                 # Disc radius
@@ -98,7 +98,7 @@ over time.
 
     omegadot = (Nacc + Ndip) / I  # Angular frequency time derivative
 
-    return np.array([Mdotdisc, omegadot])
+    return Mdotdisc, omegadot
 
 
 # Function that returns a model light curve
@@ -129,40 +129,36 @@ parameters.
                  and 10^50 erg/s
     """
     # Select appropriate time array based on GRB type
-    if (GRBtype is not None) & (GRBtype == "S"):
+    if GRBtype == "S":
         tarr = np.logspace(-3.0, 6.0, num=10001, base=10.0)
-    elif (GRBtype is not None) & (GRBtype == "L"):
-        tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
-    elif GRBtype is None:
+    elif (GRBtype == "L") or (GRBtype is None):
         tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
     else:
         raise ValueError(
-            "Please provide a valid value for GRBtype.\nOptions are: L, S, or None."
+            "Please provide a valid value for GRBtype.\n" +
+            "Options are: L, S, or None."
         )
 
-    # Separate out parameters
-    B, P, MdiscI, RdiscI, epsilon, delta = pars
-
     # Calculate initial conditions
-    y0 = init_conds(MdiscI, P)
+    init = init_conds(pars[2], pars[1])
 
     # Solve the equations
-    soln, info = odeint(odes, y0, tarr, args=(B, MdiscI, RdiscI, epsilon,
-                        delta), full_output=True)
+    soln, info = odeint(odes, init, tarr, args=(pars[0], pars[2], pars[3],
+                        pars[4], pars[5]), full_output=True)
     # Return a flag if the integration was not successful
     if info["message"] != "Integration successful.":
         return "flag"
 
     # Separate out solution
-    Mdisc = np.array(soln[:, 0])
-    omega = np.array(soln[:, 1])
+    Mdisc = soln[:, 0]
+    omega = soln[:, 1]
 
     # Convert constants
-    Rdisc = RdiscI * 1.0e5                 # Disc radius - cm
+    Rdisc = pars[3] * 1.0e5                # Disc radius - cm
     tvisc = Rdisc / (alpha * cs7 * 1.0e7)  # Viscous timescale - secs
-    mu = 1.0e15 * B * (R ** 3.0)           # Magnetic dipole moment
-    M0 = delta * MdiscI * Msol             # Fallback mass budget - grams
-    tfb = epsilon * tvisc                  # Fallback timescale - secs
+    mu = 1.0e15 * pars[0] * (R ** 3.0)     # Magnetic dipole moment
+    M0 = pars[5] * pars[2] * Msol          # Fallback mass budget - grams
+    tfb = pars[4] * tvisc                  # Fallback timescale - secs
 
     # Radii - Alfven, Corotation, Light Cylinder
     Rm = ((mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((Mdisc / tvisc) ** (-2.0
@@ -217,7 +213,7 @@ parameters.
         return L / 1.0e50
 
     else:
-        return np.array([tarr, Ltot / 1.0e50, Lprop / 1.0e50, Ldip / 1.0e50])
+        return tarr, Ltot / 1.0e50, Lprop / 1.0e50, Ldip / 1.0e50
 
 
 def main(args):
