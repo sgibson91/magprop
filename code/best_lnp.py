@@ -1,9 +1,10 @@
 import os
 import json
 import argparse
+import numpy as np
 import pandas as pd
 
-def parse_grgs():
+def parse_args():
     parser = argparse.ArgumentParser(
         description="Script to find the best, unique probabilities"
     )
@@ -29,6 +30,11 @@ def parse_grgs():
         required=True,
         help="Label of MCMC run"
     )
+    parser.add_argument(
+        "--burn",
+        action="store_true",
+        help="Is this a burn-in run or not?"
+    )
 
     return parser.parse_args()
 
@@ -41,7 +47,11 @@ def create_filenames(args):
     grb_dir = os.path.join(data_dir, args.grb)
 
     # Construct filenames
-    fdata = os.path.join(grb_dir, f"{args.grb}_{args.label}_chain.csv")
+    if args.burn:
+        fdata = os.path.join(grb_dir, f"{args.grb}_{args.label}_burn.csv")
+    else:
+        fdata = os.path.join(grb_dir, f"{args.grb}_{args.label}_chain.csv")
+
     fstats = os.path.join(grb_dir, f"{args.grb}_{args.label}_stats.json")
     fout = os.path.join(grb_dir, f"{args.grb}_{args.label}_bestlnp.csv")
 
@@ -70,7 +80,7 @@ def main():
         header=None,
         names=["B", "P", "Md", "Rd", "eps", "delt", "lnprob"]
     )
-    print(np.sort(np.unique(data["lnprob"])))
+    print(data.describe())
 
 
 if __name__ == "__main__":
