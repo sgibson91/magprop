@@ -4,17 +4,18 @@ Suite of code that models fallback accretion onto a magnetar and uses Markov Cha
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/sgibson91/magprop.svg?branch=master)](https://travis-ci.org/sgibson91/magprop)
 
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Reproducing Model Figures 1-5](#reproducing-model-figures-1-5)
-  - [Running MCMC on Synthetic Datasets](#running-mcmc-on-synthetic-datasets)
-  - [Preparing the GRB samples](#preparing-the-grb-samples)
-  - [Binder](#binder)
-- [Running Tests](#running-tests)
-- [Citing this work](#citing-this-work)
-  - [Paper](#paper)
-  - [Citation](#citation)
-  - [License](#license)
+- [Installation](#Installation)
+- [Usage](#Usage)
+  - [Reproducing Model Figures 1-5](#Reproducing-Model-Figures-1-5)
+    - [Binder](#Binder)
+  - [Running MCMC on Synthetic Datasets](#Running-MCMC-on-Synthetic-Datasets)
+  - [Preparing the GRB samples](#Preparing-the-GRB-samples)
+  - [Running MCMC simulations on the GRB samples](#Running-MCMC-simulations-on-the-GRB-samples)
+- [Running Tests](#Running-Tests)
+- [Citing this work](#Citing-this-work)
+  - [Paper](#Paper)
+  - [Citation](#Citation)
+  - [License](#License)
 
 ---
 
@@ -51,6 +52,23 @@ python code/figure_<number>.py
 
 These scripts will reproduce the model figures 1-5 in the Short GRBs paper.
 The figures will be saved to the `plots/` directory.
+
+#### Binder
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master?urlpath=lab)
+
+To run these figure scripts in Binder, click the launch button above.
+When your server launches, you will see a JupyterLab interface.
+
+Running a script in the terminal will be the same as running the scripts locally.
+If you run a script in the Python Console, then you'll need to modify the command to the following.
+
+```
+%run code/figure_<number>.py
+```
+
+You will **NOT** be able to run the MCMC simulations inside the Binder instance as the servers are limited to `1G` memory and `0.5` CPU.
+Please follow the instructions in [Installation](#installation) in order to run the MCMC simulations locally.
 
 ### Running MCMC on Synthetic Datasets
 
@@ -109,22 +127,7 @@ Run the _k_-correction on the Short GRB sample by running the following command.
 python code/kcorr -t S
 ```
 
-### Binder
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sgibson91/magprop/master?urlpath=lab)
-
-To run this repo in Binder, click the launch button above.
-When your server launches, you will see a JupyterLab interface.
-
-Running a script in the terminal will be the same as running the scripts locally.
-If you run a script in the Python Console, then you'll need to modify the command to the following.
-
-```
-%run code/figure_<number>.py
-```
-
-You will **NOT** be able to run the MCMC simulations inside the Binder instance as the servers are limited to `1G` memory and `0.5` CPU.
-Please follow the instructions in [Installation](#installation) in order to run the MCMC simulations locally.
+### Running MCMC simulations on the GRB samples
 
 ## Running Tests
 
