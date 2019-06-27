@@ -173,11 +173,11 @@ def create_trace(sampler, Npars, Nstep, Nwalk, fplot):
 
     for k in range(Npars):
         for j in range(Nwalk):
-            axes[i + 1].plot(range(Nstep), sampler.get_chain()[:, j, k],
+            axes[k + 1].plot(range(Nstep), sampler.get_chain()[:, j, k],
                              c='gray', alpha=0.4)
-        axes[i + 1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
-        axes[i + 1].tick_params(axis='both', which='major', labelsize=10)
-        axes[i + 1].set_ylabel(names[k], fontsize=12)
+        axes[k + 1].yaxis.set_major_locator(MaxNLocator(4, prune='lower'))
+        axes[k + 1].tick_params(axis='both', which='major', labelsize=10)
+        axes[k + 1].set_ylabel(names[k], fontsize=12)
 
     axes[-1].set_xlabel('Model Number', fontsize=12)
     fig.tight_layout(h_pad=0.1)
