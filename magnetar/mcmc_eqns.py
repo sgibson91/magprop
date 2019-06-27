@@ -14,23 +14,27 @@ the chi square goodness-of-fit statstic.
     :return: log-likelihood value (float)
     """
     # Separate data
-    x = data["t"]
-    y = data["Lum50"]
-    yerr = data["Lum50err"]
+    x = data["t"].values
+    y = data["Lum50"].values
+    yerr = data["Lum50err"].values
+
+    # Convert parameters out of log space
+    arr = np.array(pars)
+    arr[2:6] = 10.0 ** arr[2:6]
 
     # Calculate the model
-    if len(pars) == 6:
-        ymod = model_lc(pars, xdata=x, GRBtype=GRBtype)
-    elif len(pars) == 7:
-        ymod = model_lc(pars[:6], xdata=x, GRBtype=GRBtype, f_beam=pars[6])
-    elif len(pars) == 8:
+    if len(arr) == 6:
+        ymod = model_lc(arr, xdata=x, GRBtype=GRBtype)
+    elif len(arr) == 7:
+        ymod = model_lc(arr[:6], xdata=x, GRBtype=GRBtype, f_beam=arr[6])
+    elif len(arr) == 8:
         ymod = model_lc(
-            pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6], propeff=pars[7]
+            arr[:6], xdata=x, GRBtype=GRBtype, dipeff=arr[6], propeff=arr[7]
         )
-    elif len(pars) == 9:
+    elif len(arr) == 9:
         ymod = model_lc(
-            pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
-            propeff=pars[7], f_beam=pars[8]
+            arr[:6], xdata=x, GRBtype=GRBtype, dipeff=arr[6],
+            propeff=arr[7], f_beam=arr[8]
         )
 
     # Return the log-likelihood
