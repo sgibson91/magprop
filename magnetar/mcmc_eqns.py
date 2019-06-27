@@ -37,8 +37,11 @@ the chi square goodness-of-fit statstic.
             propeff=arr[7], f_beam=arr[8]
         )
 
-    # Return the log-likelihood
-    return -0.5 * np.sum(((y - ymod) / yerr) ** 2.0)
+    if ymod == "flag":
+        return -np.inf
+    else:
+        # Return the log-likelihood
+        return -0.5 * np.sum(((y - ymod) / yerr) ** 2.0)
 
 
 def lnprior(pars, custom_lims=None):
