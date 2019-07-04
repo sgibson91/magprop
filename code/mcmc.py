@@ -273,8 +273,8 @@ def main():
         }
     else:
         info["chain"] = {
-            "mean_acceptance_fraction": mean_acc_frac),
-            "mean_autocorr_time": avg_autocorr)
+            "mean_acceptance_fraction": mean_acc_frac,
+            "mean_autocorr_time": avg_autocorr
         }
     with open(fstats, "w") as f:
         json.dump(info, f)
