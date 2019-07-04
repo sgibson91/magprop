@@ -269,7 +269,7 @@ def main():
     if args.burn:
         info["burn"] = {
             "mean_acceptance_fraction": mean_acc_frac,
-            "mean_autocorr_time": avg_autocorr)
+            "mean_autocorr_time": avg_autocorr
         }
     else:
         info["chain"] = {
