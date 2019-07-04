@@ -253,21 +253,28 @@ def main():
         sampler.run_mcmc(pos, Nstep, progress=True)
 
     # Acceptance fraction and autocorrelation time
+    mean_acc_frac = np.mean(sampler.acceptance_fraction)
+
+    try:
+        avg_autocorr = np.mean(sampler.get_autocorr_time())
+    except am.autocorr.AutocorrError:
+        avg_autocorr = None
+
     print(
         f"{args.grb}\n" +
-        f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction):.3f}\n" +
-        f"Average auto-correlation time: {np.mean(sampler.get_autocorr_time()):.3f}"
+        f"Mean acceptance fraction: {mean_acc_frac:.3f}\n" +
+        f"Average auto-correlation time: {avg_autocorr:.3f}"
     )
 
     if args.burn:
         info["burn"] = {
-            "mean_acceptance_fraction": np.mean(sampler.acceptance_fraction),
-            "mean_autocorr_time": np.mean(sampler.get_autocorr_time())
+            "mean_acceptance_fraction": mean_acc_frac,
+            "mean_autocorr_time": avg_autocorr)
         }
     else:
         info["chain"] = {
-            "mean_acceptance_fraction": np.mean(sampler.acceptance_fraction),
-            "mean_autocorr_time": np.mean(sampler.get_autocorr_time())
+            "mean_acceptance_fraction": mean_acc_frac),
+            "mean_autocorr_time": avg_autocorr)
         }
     with open(fstats, "w") as f:
         json.dump(info, f)
