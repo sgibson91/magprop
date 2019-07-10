@@ -257,7 +257,7 @@ def main():
 
     try:
         avg_autocorr = np.mean(sampler.get_autocorr_time())
-    except am.autocorr.AutocorrError:
+    except em.autocorr.AutocorrError:
         avg_autocorr = None
 
     print(
