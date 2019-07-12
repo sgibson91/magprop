@@ -40,6 +40,8 @@ Use the `setup.py` to install the `magnetar` library.
 python setup.py install
 ```
 
+To set this repo up on a virtual machine for larger MCMC simulations, please see [`INSTALL.md`](./INSTALL.md).
+
 ## Usage
 
 ### Reproducing Model Figures 1-5
