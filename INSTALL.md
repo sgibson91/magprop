@@ -1,5 +1,8 @@
 # Installing on an Azure Virtual Machine
 
+This document will walk you through setting up a Linux Data Science Virtual Machine on Azure for larger MCMC simulations.
+We choose a Data Science Virtual Machine as it comes pre-installed with a [wide range of languages and packages relevant to data science](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/overview#whats-included-in-the-data-science-vm), including Python.
+
 - [Subscription](#Subscription)
 - [Creating a Data Science Virtual Machine](#Creating-a-Data-Science-Virtual-Machine)
 - [Setting up the Environment](#Setting-up-the-Environment)
@@ -17,6 +20,8 @@ At the end of the free trial, your services will automatically cease, then delet
 Once you have set up your account, we can request a virtual machine.
 
 ## Creating a Data Science Virtual Machine
+
+You can also follow [Azure's creation instructions](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#create-your-data-science-virtual-machine-for-linux).
 
 1. Login into the [Azure Portal](https://portal.azure.com/)
 2. From the left panel, click "+ Create a resource"
