@@ -21,6 +21,8 @@ Suite of code that models fallback accretion onto a magnetar and uses Markov Cha
 
 ## Installation
 
+You will need Python >=v3.6 installed to run this code.
+
 Begin by cloning this repo.
 
 ```
