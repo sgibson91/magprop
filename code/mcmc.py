@@ -252,19 +252,26 @@ def main():
         # Run MCMC
         sampler.run_mcmc(pos, Nstep, progress=True)
 
-    # Acceptance fraction and autocorrelation time
-    mean_acc_frac = np.mean(sampler.acceptance_fraction)
-
     try:
+        # Acceptance fraction and autocorrelation time
+        mean_acc_frac = np.mean(sampler.acceptance_fraction)
         avg_autocorr = np.mean(sampler.get_autocorr_time())
+
+        print(
+            f"{args.grb}\n" +
+            f"Mean acceptance fraction: {mean_acc_frac:.3f}\n" +
+            f"Average auto-correlation time: {avg_autocorr:.3f}"
+        )
     except em.autocorr.AutocorrError:
+        # Acceptance fraction and autocorrelation time
+        mean_acc_frac = np.mean(sampler.acceptance_fraction)
         avg_autocorr = None
 
-    print(
-        f"{args.grb}\n" +
-        f"Mean acceptance fraction: {mean_acc_frac:.3f}\n" +
-        f"Average auto-correlation time: {avg_autocorr:.3f}"
-    )
+        print(
+            f"{args.grb}\n" +
+            f"Mean acceptance fraction: {mean_acc_frac:.3f}\n" +
+            f"Average auto-correlation time: None"
+        )
 
     if args.burn:
         info["burn"] = {
