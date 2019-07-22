@@ -56,15 +56,15 @@ def create_filenames(args):
 
     return fdata, fstats, fout
 
-def get_names(Npars):
+def get_names(Npars: int) -> List[str]:
     if Npars == 6:
-        names=["B", "P", "Md", "Rd", "eps", "delt", "lnprob"]
+        names = ["B", "P", "Md", "Rd", "eps", "delt", "lnprob"]
     elif Npars == 7:
-        names=["B", "P", "Md", "Rd", "eps", "delt", "f_beam", "lnprob"]
+        names = ["B", "P", "Md", "Rd", "eps", "delt", "f_beam", "lnprob"]
     elif Npars == 8:
-        names=["B", "P", "Md", "Rd", "eps", "delt", "dipeff", "propeff", "lnprob"]
+        names = ["B", "P", "Md", "Rd", "eps", "delt", "dipeff", "propeff", "lnprob"]
     elif Npars == 9:
-        names=["B", "P", "Md", "Rd", "eps", "delt", "dipeff", "propeff", "f_beam", "lnprob"]
+        names = ["B", "P", "Md", "Rd", "eps", "delt", "dipeff", "propeff", "f_beam", "lnprob"]
     else:
         raise ValueError("Npars must be 6, 7, 8 or 9.")
 
@@ -81,7 +81,7 @@ def main():
     with open(fstats, "r") as stream:
         info = json.load(stream)
 
-    # Get MCMC parameters
+    # Get MCMC parameters and parameter names
     Npars = info["Npars"]
     Nstep = info["Nstep"]
     Nwalk = info["Nwalk"]
