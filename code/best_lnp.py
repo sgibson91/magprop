@@ -56,7 +56,7 @@ def create_filenames(args):
 
     return fdata, fstats, fout
 
-def get_names(Npars: int) -> List[str]:
+def get_names(Npars):
     if Npars == 6:
         names = ["B", "P", "Md", "Rd", "eps", "delt", "lnprob"]
     elif Npars == 7:
@@ -107,8 +107,8 @@ def main():
     print(f"--> Writing best {Nwalk} probabilities to file: {fout}")
     with open(fout, "w") as f:
         for idx in indices:
-            for name in names:
-                if name == "lnprob":
+            for i, name in enumerate(names[:-1]):
+                if i == (Npars - 1):
                     f.write(f"{data[name].values[idx]:.6f}\n")
                 else:
                     f.write(f"{data[name].values[idx]:.6f},")
