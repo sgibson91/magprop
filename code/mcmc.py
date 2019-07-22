@@ -248,7 +248,7 @@ def main():
         if args.custom_limits:
             sampler = sampler = em.EnsembleSampler(
                 Nwalk, Npars, lnprob,
-                args=(data, args.type, custom_lims=args.custom_limits),
+                args=(data, args.type, args.custom_limits),
                 pool=pool, runtime_sortingfn=sort_on_runtime
             )
         else:
