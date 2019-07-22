@@ -192,7 +192,7 @@ def main():
     # Create filenames
     fdata, fstats, fchain, fplot, fn = create_filenames(args)
 
-    if args.re_run:
+    if args.re_run or not args.burn:
         # Load info file
         with open(fstats, "r") as stream:
             mc_pars = json.load(stream)
@@ -241,14 +241,22 @@ def main():
             )
 
     else:
-        pos = np.loadtxt(f"{fn}_bestlnp.csv", delimiter=",")
+        pos = np.loadtxt(f"{fn.strip('_chain')}_bestlnp.csv", delimiter=",")
 
     with Pool(args.n_threads) as pool:  # context management
         # Initialise the sampler
-        sampler = sampler = em.EnsembleSampler(
-            Nwalk, Npars, lnprob, args=(data, args.type), pool=pool,
-            runtime_sortingfn=sort_on_runtime
-        )
+        if args.custom_limits:
+            sampler = sampler = em.EnsembleSampler(
+                Nwalk, Npars, lnprob,
+                args=(data, args.type, custom_lims=args.custom_limits),
+                pool=pool, runtime_sortingfn=sort_on_runtime
+            )
+        else:
+            sampler = sampler = em.EnsembleSampler(
+                Nwalk, Npars, lnprob, args=(data, args.type), pool=pool,
+                runtime_sortingfn=sort_on_runtime
+            )
+
         # Run MCMC
         sampler.run_mcmc(pos, Nstep, progress=True)
 
