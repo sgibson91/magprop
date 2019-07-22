@@ -38,7 +38,6 @@ def parse_args():
 
     return parser.parse_args()
 
-
 def create_filenames(args):
     # Data directory
     data_dir = os.path.join("data", f"{args.type}GRBS")
@@ -57,6 +56,19 @@ def create_filenames(args):
 
     return fdata, fstats, fout
 
+def get_names(Npars):
+    if Npars == 6:
+        names=["B", "P", "Md", "Rd", "eps", "delt", "lnprob"]
+    elif Npars == 7:
+        names=["B", "P", "Md", "Rd", "eps", "delt", "f_beam", "lnprob"]
+    elif Npars == 8:
+        names=["B", "P", "Md", "Rd", "eps", "delt", "dipeff", "propeff", "lnprob"]
+    elif Npars == 9:
+        names=["B", "P", "Md", "Rd", "eps", "delt", "dipeff", "propeff", "f_beam", "lnprob"]
+    else:
+        raise ValueError("Npars must be 6, 7, 8 or 9.")
+
+    return names
 
 def main():
     # Parse command line args
@@ -73,15 +85,33 @@ def main():
     Npars = info["Npars"]
     Nstep = info["Nstep"]
     Nwalk = info["Nwalk"]
+    names = get_names(Npars)
 
     # Load in data
     data = pd.read_csv(
         fdata,
         header=None,
-        names=["B", "P", "Md", "Rd", "eps", "delt", "lnprob"]
+        names=names
     )
-    print(data.describe())
 
+    # Find unique values of lnprob and sort
+    unique_probs = np.sort(np.unique(data["lnprob"]))[::-1]
+    print(f"--> Number of unique probabilities: {len(unique_probs)}")
+
+    # Find find first location of best Nwalk probability
+    indices = []
+    for prob in unique_probs[:Nwalk]:
+        indices.append(np.where(data["lnprob"].values == prob)[0][0])
+
+    # Write probabilities to a file
+    print(f"--> Writing best {Nwalk} probabilities to file: {fout}")
+    with open(fout, "w") as f:
+        for idx in indices:
+            for name in names:
+                if name == "lnprob":
+                    f.write(f"{data[name].values[idx]:.6f}\n")
+                else:
+                    f.write(f"{data[name].values[idx]:.6f},")
 
 if __name__ == "__main__":
     main()
