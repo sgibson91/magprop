@@ -195,15 +195,15 @@ def main():
     if args.re_run or not args.burn:
         # Load info file
         with open(fstats, "r") as stream:
-            mc_pars = json.load(stream)
+            info = json.load(stream)
 
         # Set random seed
-        np.random.seed(mc_pars["seed"])
+        np.random.seed(info["seed"])
 
         # Set MCMC parameters
-        Npars = mc_pars["Npars"]
-        Nstep = mc_pars["Nstep"]
-        Nwalk = mc_pars["Nwalk"]
+        Npars = info["Npars"]
+        Nstep = info["Nstep"]
+        Nwalk = info["Nwalk"]
 
     else:
         # Retrieve random seed
