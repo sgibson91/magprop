@@ -11,7 +11,7 @@ GRBs = {
     "Humped": np.array([1.0, 5.0, 1.0e-3, 100.0, 0.1, 1.0]),
     "Classic": np.array([1.0, 5.0, 1.0e-3, 1000.0, 0.1, 1.0]),
     "Sloped": np.array([1.0, 1.0, 1.0e-3, 100.0, 10.0, 10.0]),
-    "Stuttering": np.array([1.0, 5.0, 1.0e-5, 100.0, 0.1, 100.0])
+    "Stuttering": np.array([1.0, 5.0, 1.0e-5, 100.0, 0.1, 100.0]),
 }
 
 
@@ -24,7 +24,7 @@ def parse_args():
         "--grb",
         required=True,
         choices=["Humped", "Classic", "Sloped", "Stuttering"],
-        help="GRB type name"
+        help="GRB type name",
     )
 
     return parser.parse_args()

@@ -14,10 +14,10 @@ from matplotlib.ticker import MaxNLocator
 
 # Dictionary of true values for burst types
 truths = {
-    'Humped': [1.0, 5.0, -3.0, 2.0, -1.0, 0.0],
-    'Classic': [1.0, 5.0, -3.0, 3.0, -1.0, 0.0],
-    'Sloped': [1.0, 1.0, -3.0, 2.0, 1.0, 1.0],
-    'Stuttering': [1.0, 5.0, -5.0, 2.0, -1.0, 2.0]
+    "Humped": [1.0, 5.0, -3.0, 2.0, -1.0, 0.0],
+    "Classic": [1.0, 5.0, -3.0, 3.0, -1.0, 0.0],
+    "Sloped": [1.0, 1.0, -3.0, 2.0, 1.0, 1.0],
+    "Stuttering": [1.0, 5.0, -5.0, 2.0, -1.0, 2.0],
 }
 
 
@@ -30,14 +30,14 @@ def parse_args():
         "--grb",
         required=True,
         choices=["Humped", "Classic", "Sloped", "Stuttering"],
-        help="Name of synthetic GRB dataset"
+        help="Name of synthetic GRB dataset",
     )
     parser.add_argument(
         "-b",
         "--n-burn",
         type=int,
         required=True,
-        help="Number of burn-in samples to remove"
+        help="Number of burn-in samples to remove",
     )
 
     return parser.parse_args()
@@ -75,17 +75,22 @@ def create_filenames(GRB):
 
 def create_corner_plot(s, GRB, fplot):
     # Latex strings for labels
-    names = [r'$B$', r'$P$', r'$\log_{10} (M_{\rm D,i})$',
-             r'$\log_{10} (R_{\rm D})$', r'$\log_{10} (\epsilon)$',
-             r'$\log_{10} (\delta)$']
+    names = [
+        r"$B$",
+        r"$P$",
+        r"$\log_{10} (M_{\rm D,i})$",
+        r"$\log_{10} (R_{\rm D})$",
+        r"$\log_{10} (\epsilon)$",
+        r"$\log_{10} (\delta)$",
+    ]
 
     fig = corner.corner(
         s,
         labels=names,
         truths=np.array(truths[GRB]),
-        label_kwargs={'fontsize':12},
+        label_kwargs={"fontsize": 12},
         quantiles=[0.025, 0.5, 0.975],
-        plot_contours=True
+        plot_contours=True,
     )
     fig.savefig("{0}".format(fplot))
     plt.clf()
@@ -95,23 +100,24 @@ def create_model_plot(model, data, GRB, fplot):
     fig = plt.figure(figsize=(6, 4.5))
     ax = fig.add_subplot(111)
 
-    ax.errorbar(data["x"], data["y"], yerr=data["yerr"], fmt='.r', capsize=0.0)
+    ax.errorbar(data["x"], data["y"], yerr=data["yerr"], fmt=".r", capsize=0.0)
 
     try:
-        ax.loglog(model[0, :], model[1, :], c='k')
-        ax.loglog(model[0, :], model[2, :], c='k', ls='--')
-        ax.loglog(model[0, :], model[3, :], c='k', ls=':')
+        ax.loglog(model[0, :], model[1, :], c="k")
+        ax.loglog(model[0, :], model[2, :], c="k", ls="--")
+        ax.loglog(model[0, :], model[3, :], c="k", ls=":")
     except:
-        ax.set_xscale('log')
-        ax.set_yscale('log')
+        ax.set_xscale("log")
+        ax.set_yscale("log")
 
     ax.set_xlim(1.0e0, 1.0e6)
     ax.set_ylim(1.0e-8, 1.0e2)
-    ax.tick_params(axis='both', which='major', labelsize=10)
-    ax.set_xlabel(r'Time (s)', fontsize=12)
-    ax.set_ylabel(r'Luminosity $\left(10^{50} {\rm erg} {\rm s}^{-1}\right)$',
-                fontsize=12)
-    ax.set_title(r'{0}'.format(GRB), fontsize=12)
+    ax.tick_params(axis="both", which="major", labelsize=10)
+    ax.set_xlabel(r"Time (s)", fontsize=12)
+    ax.set_ylabel(
+        r"Luminosity $\left(10^{50} {\rm erg} {\rm s}^{-1}\right)$", fontsize=12
+    )
+    ax.set_title(r"{0}".format(GRB), fontsize=12)
 
     fig.tight_layout()
     fig.savefig("{0}".format(fplot))
@@ -123,8 +129,9 @@ def main():
     args = parse_args()
 
     # Create filenames
-    fdata, fchain, fstats, fres, finfo, fplot_corner, fplot_model = \
-        create_filenames(args.grb)
+    fdata, fchain, fstats, fres, finfo, fplot_corner, fplot_model = create_filenames(
+        args.grb
+    )
 
     # Read in MCMC parameters
     with open(finfo, "r") as stream:
@@ -140,7 +147,7 @@ def main():
     # Read in chain & probability and reshape
     cols = tuple(range(Npars))
     skip = (args.n_burn * Nwalk) + 1
-    samples = np.loadtxt(fchain, delimiter=',', skiprows=1, usecols=cols)
+    samples = np.loadtxt(fchain, delimiter=",", skiprows=1, usecols=cols)
 
     stats = {"Nburn": args.n_burn}
 
@@ -152,7 +159,7 @@ def main():
     for i in range(Npars):
         j = i + 1
         while j < Npars:
-            corrs.append(np.corrcoef(samples[:,i], samples[:,j])[0,1])
+            corrs.append(np.corrcoef(samples[:, i], samples[:, j])[0, 1])
             j += 1
     stats["correlations"] = corrs
 
@@ -160,8 +167,8 @@ def main():
     samples[:, 2:] = 10.0 ** samples[:, 2:]  # Convert out of log-space
 
     B, P, Md, Rd, eps, delt = map(
-        lambda v: (v[1], v[2]-v[1], v[1]-v[0]),
-        zip(*np.percentile(samples, [2.5, 50.0, 97.5], axis=0))
+        lambda v: (v[1], v[2] - v[1], v[1] - v[0]),
+        zip(*np.percentile(samples, [2.5, 50.0, 97.5], axis=0)),
     )
 
     pars = [B[0], P[0], Md[0], Rd[0], eps[0], delt[0]]
@@ -172,9 +179,8 @@ def main():
         "RdiscI": Rd,
         "epsilon": eps,
         "delta": delt,
-        "truths": truths[args.grb]
+        "truths": truths[args.grb],
     }
-
 
     # Calculate model and fit statistics and write to file
     ymod = model_lum(pars, xdata=data["x"])
@@ -190,23 +196,53 @@ def main():
     stats["stats"] = {"chi_square_red": chisq_r}
 
     stats["latex"] = (
-        f'\n\n{args.grb}' + ' & $' + f'{B[0]}' + '^{+' +
-        f'{B[1]}' + '}_{-' + f'{B[2]}' + '}$ & $' +
-        f'{P[0]}' + '^{+' + f'{P[1]}' + '}_{-' +
-        f'{P[2]}' + '}$ & $' + f'{Md[0]}' + '^{+' +
-        f'{Md[1]}' + '}_{-' + f'{Md[2]}' + '}$ & $' +
-        f'{Rd[0]}' + '^{+' + f'{Rd[1]}' + '}_{-' +
-        f'{Rd[2]}' + '}$ & $' + f'{eps[0]}' + '^{+' +
-        f'{eps[1]}' + '}_{-' + f'{eps[2]}' + '}$ & $' +
-        f'{delt[0]}' + '^{+' + f'{delt[1]}' + '}_{-' +
-        f'{delt[2]}' + '}$ & $' + f'{chisq_r}' + '$ \\\\ [2pt]'
+        f"\n\n{args.grb}"
+        + " & $"
+        + f"{B[0]}"
+        + "^{+"
+        + f"{B[1]}"
+        + "}_{-"
+        + f"{B[2]}"
+        + "}$ & $"
+        + f"{P[0]}"
+        + "^{+"
+        + f"{P[1]}"
+        + "}_{-"
+        + f"{P[2]}"
+        + "}$ & $"
+        + f"{Md[0]}"
+        + "^{+"
+        + f"{Md[1]}"
+        + "}_{-"
+        + f"{Md[2]}"
+        + "}$ & $"
+        + f"{Rd[0]}"
+        + "^{+"
+        + f"{Rd[1]}"
+        + "}_{-"
+        + f"{Rd[2]}"
+        + "}$ & $"
+        + f"{eps[0]}"
+        + "^{+"
+        + f"{eps[1]}"
+        + "}_{-"
+        + f"{eps[2]}"
+        + "}$ & $"
+        + f"{delt[0]}"
+        + "^{+"
+        + f"{delt[1]}"
+        + "}_{-"
+        + f"{delt[2]}"
+        + "}$ & $"
+        + f"{chisq_r}"
+        + "$ \\\\ [2pt]"
     )
 
     # Smoothed model
     fit = model_lum(pars)
 
     # Write to a file
-    with open(fstats, 'w') as f:
+    with open(fstats, "w") as f:
         json.dump(stats, f)
     print(f"Results written to: {fstats}")
 
@@ -214,12 +250,9 @@ def main():
     create_model_plot(fit, data, args.grb, fplot_model)
 
     # Write smoothed model to a file
-    model = pd.DataFrame({
-        "t": fit[0, :],
-        "Ltot": fit[1, :],
-        "Lprop": fit[2, :],
-        "Ldip": fit[3, :]
-    })
+    model = pd.DataFrame(
+        {"t": fit[0, :], "Ltot": fit[1, :], "Lprop": fit[2, :], "Ldip": fit[3, :]}
+    )
     model.to_csv(fres)
 
 

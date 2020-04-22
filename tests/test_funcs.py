@@ -16,21 +16,21 @@ Test function for init_conds in magnetar library.
     Msol = 1.99e33  # Solar mass in grams
 
     MdiscI = 0.001  # Solar masses
-    P = 1.0         # milliseconds
+    P = 1.0  # milliseconds
 
-    Mdisc = MdiscI * Msol                 # Convert to grams
+    Mdisc = MdiscI * Msol  # Convert to grams
     omega = (2.0 * np.pi) / (1.0e-3 * P)  # Convert to angular frequency
 
-    assert ((init_conds(MdiscI, P)[0] == Mdisc) &
-            (init_conds(MdiscI, P)[1] == omega))
+    assert (init_conds(MdiscI, P)[0] == Mdisc) & (init_conds(MdiscI, P)[1] == omega)
 
 
 def test_odes_integrated_by_odeint():
     """
 Function to test that odes is consistently being integrated by ODEINT.
     """
-    expected_data = pd.read_csv("tests/test_data/odes_integrated_by_odeint.csv",
-                                index_col=False)
+    expected_data = pd.read_csv(
+        "tests/test_data/odes_integrated_by_odeint.csv", index_col=False
+    )
     t = expected_data["t"]
 
     MdiscI = 0.001
@@ -44,13 +44,16 @@ Function to test that odes is consistently being integrated by ODEINT.
     Mdisc = soln[:, 0]
     omega = soln[:, 1]
 
-    assert (np.isclose(Mdisc, expected_data["Mdisc"]).all() &
-            np.isclose(omega, expected_data["omega"]).all())
+    assert (
+        np.isclose(Mdisc, expected_data["Mdisc"]).all()
+        & np.isclose(omega, expected_data["omega"]).all()
+    )
 
 
 def test_model_light_curve():
-    expected_data = pd.read_csv("tests/test_data/model_light_curve.csv",
-                                index_col=False)
+    expected_data = pd.read_csv(
+        "tests/test_data/model_light_curve.csv", index_col=False
+    )
 
     pars = [1.0, 5.0, 0.001, 100.0, 0.1, 1.0]
     t, Ltot, Lprop, Ldip = model_lc(pars)
@@ -93,7 +96,7 @@ def dU_dx(U, x):
 U is a vector such that y=U[0] and z=U[1]. This function should return [y', z'].
 z is the substitution z==y'
     """
-    return [U[1], -2*U[1] - 2*U[0] + np.cos(2*x)]
+    return [U[1], -2 * U[1] - 2 * U[0] + np.cos(2 * x)]
 
 
 def test_damped_harmonic_oscillator_ode():
@@ -125,7 +128,7 @@ dx/dt = x*(a - b*y); dy/dt = -y*(c -d*x)
 
 a, b, c, d are parameters which are assumed to be positive.
     """
-    return [P[0]*(a - b*P[1]), -P[1]*(c - d*P[0])]
+    return [P[0] * (a - b * P[1]), -P[1] * (c - d * P[0])]
 
 
 def test_predator_prey_ode():
@@ -141,8 +144,9 @@ integrated by ODEINT are consistent.
     prey = Ps[:, 0]
     predator = Ps[:, 1]
 
-    assert ((np.isclose(prey, expected_data["prey"]).all()) &
-            (np.isclose(predator, expected_data["predators"]).all()))
+    assert (np.isclose(prey, expected_data["prey"]).all()) & (
+        np.isclose(predator, expected_data["predators"]).all()
+    )
 
 
 ################################################################################

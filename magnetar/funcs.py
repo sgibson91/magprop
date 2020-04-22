@@ -4,11 +4,11 @@ from scipy.interpolate import interp1d
 
 
 # Global constants
-G = 6.674e-8                      # Gravitational constant - cgs units
-c = 3.0e10                        # Light speed - cm/s
-R = 1.0e6                         # Magnetar radius - cm
-Msol = 1.99e33                    # Solar mass - grams
-M = 1.4 * Msol                    # Magnetar mass - grams
+G = 6.674e-8  # Gravitational constant - cgs units
+c = 3.0e10  # Light speed - cm/s
+R = 1.0e6  # Magnetar radius - cm
+Msol = 1.99e33  # Solar mass - grams
+M = 1.4 * Msol  # Magnetar mass - grams
 I = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of inertia
 GM = G * M
 
@@ -23,15 +23,14 @@ period in milliseconds into an angular frequency.
     :param P: initial spin period - milliseconds
     :return: an array containing the disc mass in grams and the angular freq.
     """
-    Mdisc0 = MdiscI * Msol                 # Disc mass
+    Mdisc0 = MdiscI * Msol  # Disc mass
     omega0 = (2.0 * np.pi) / (1.0e-3 * P)  # Angular frequency
 
     return np.array([Mdisc0, omega0])
 
 
 # Model to be passed to odeint to calculate Mdisc and omega
-def odes(y, t, B, MdiscI, RdiscI, epsilon, delta, n=1.0, alpha=0.1, cs7=1.0,
-         k=0.9):
+def odes(y, t, B, MdiscI, RdiscI, epsilon, delta, n=1.0, alpha=0.1, cs7=1.0, k=0.9):
     """
 Function to be passed to ODEINT to calculate the disc mass and angular frequency
 over time.
@@ -54,15 +53,14 @@ over time.
     Mdisc, omega = y
 
     # Constants
-    Rdisc = RdiscI * 1.0e5                 # Disc radius
+    Rdisc = RdiscI * 1.0e5  # Disc radius
     tvisc = Rdisc / (alpha * cs7 * 1.0e7)  # Viscous timescale
-    mu = 1.0e15 * B * (R ** 3.0)           # Magnetic Dipole Moment
-    M0 = delta * MdiscI * Msol             # Global Mass Budget
-    tfb = epsilon * tvisc                  # Fallback timescale
+    mu = 1.0e15 * B * (R ** 3.0)  # Magnetic Dipole Moment
+    M0 = delta * MdiscI * Msol  # Global Mass Budget
+    tfb = epsilon * tvisc  # Fallback timescale
 
     # Radii -- Alfven, Corotation, Light Cylinder
-    Rm = ((mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((Mdisc / tvisc) ** (-2.0
-          / 7.0)))
+    Rm = (mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((Mdisc / tvisc) ** (-2.0 / 7.0))
     Rc = (GM / (omega ** 2.0)) ** (1.0 / 3.0)
     Rlc = c / omega
     # Cap Alfven radius
@@ -72,9 +70,13 @@ over time.
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness Parameter
 
     bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
-    modW = (0.6 * M * (c ** 2.0) * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM /
-            (R * (c ** 2.0))))))     # Binding energy
-    rot_param = bigT / modW          # Rotation parameter
+    modW = (
+        0.6
+        * M
+        * (c ** 2.0)
+        * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM / (R * (c ** 2.0)))))
+    )  # Binding energy
+    rot_param = bigT / modW  # Rotation parameter
 
     # Dipole torque
     Ndip = (-1.0 * (mu ** 2.0) * (omega ** 3.0)) / (6.0 * (c ** 3.0))
@@ -83,7 +85,7 @@ over time.
     eta2 = 0.5 * (1.0 + np.tanh(n * (w - 1.0)))
     eta1 = 1.0 - eta2
     Mdotprop = eta2 * (Mdisc / tvisc)  # Propelled
-    Mdotacc = eta1 * (Mdisc / tvisc)   # Accretion
+    Mdotacc = eta1 * (Mdisc / tvisc)  # Accretion
     Mdotfb = (M0 / tfb) * (((t + tfb) / tfb) ** (-5.0 / 3.0))
     Mdotdisc = Mdotfb - Mdotprop - Mdotacc
 
@@ -102,8 +104,18 @@ over time.
 
 
 # Function that returns a model light curve
-def model_lc(pars, xdata=None, GRBtype=None, dipeff=0.05, propeff=0.4,
-             f_beam=1.0, n=1.0, alpha=0.1, cs7=1.0, k=0.9):
+def model_lc(
+    pars,
+    xdata=None,
+    GRBtype=None,
+    dipeff=0.05,
+    propeff=0.4,
+    f_beam=1.0,
+    n=1.0,
+    alpha=0.1,
+    cs7=1.0,
+    k=0.9,
+):
     """
 Function to calculate a model gamma-ray burst, X-ray light curve based on input
 parameters.
@@ -147,8 +159,9 @@ parameters.
     y0 = init_conds(MdiscI, P)
 
     # Solve the equations
-    soln, info = odeint(odes, y0, tarr, args=(B, MdiscI, RdiscI, epsilon,
-                        delta), full_output=True)
+    soln, info = odeint(
+        odes, y0, tarr, args=(B, MdiscI, RdiscI, epsilon, delta), full_output=True
+    )
     # Return a flag if the integration was not successful
     if info["message"] != "Integration successful.":
         return "flag"
@@ -158,25 +171,28 @@ parameters.
     omega = np.array(soln[:, 1])
 
     # Convert constants
-    Rdisc = RdiscI * 1.0e5                 # Disc radius - cm
+    Rdisc = RdiscI * 1.0e5  # Disc radius - cm
     tvisc = Rdisc / (alpha * cs7 * 1.0e7)  # Viscous timescale - secs
-    mu = 1.0e15 * B * (R ** 3.0)           # Magnetic dipole moment
-    M0 = delta * MdiscI * Msol             # Fallback mass budget - grams
-    tfb = epsilon * tvisc                  # Fallback timescale - secs
+    mu = 1.0e15 * B * (R ** 3.0)  # Magnetic dipole moment
+    M0 = delta * MdiscI * Msol  # Fallback mass budget - grams
+    tfb = epsilon * tvisc  # Fallback timescale - secs
 
     # Radii - Alfven, Corotation, Light Cylinder
-    Rm = ((mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((Mdisc / tvisc) ** (-2.0
-          / 7.0)))
+    Rm = (mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((Mdisc / tvisc) ** (-2.0 / 7.0))
     Rc = (GM / (omega ** 2.0)) ** (1.0 / 3.0)
     Rlc = c / omega
     # Cap Alfven radius to Light Cylinder radius
     Rm = np.where(Rm >= (k * Rlc), (k * Rlc), Rm)
 
-    w = (Rm / Rc) ** (3.0 / 2.0)     # Fastness parameter
+    w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness parameter
     bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
-    modW = (0.6 * M * (c ** 2.0) * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM /
-            (R * (c ** 2.0))))))     # Binding energy
-    rot_param = bigT / modW          # Rotational parameter
+    modW = (
+        0.6
+        * M
+        * (c ** 2.0)
+        * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM / (R * (c ** 2.0)))))
+    )  # Binding energy
+    rot_param = bigT / modW  # Rotational parameter
 
     # Dipole torque
     Ndip = (-1.0 * (mu ** 2.0) * (omega ** 3.0)) / (6.0 * (c ** 3.0))
@@ -194,9 +210,9 @@ parameters.
             Nacc[i] = 0.0
         else:
             if Rm[i] >= R:
-                Nacc[i] = ((GM * Rm[i]) ** 0.5 * (Mdotacc[i] - Mdotprop[i]))
+                Nacc[i] = (GM * Rm[i]) ** 0.5 * (Mdotacc[i] - Mdotprop[i])
             else:
-                Nacc[i] = ((GM * R) ** 0.5 * (Mdotacc[i] - Mdotprop[i]))
+                Nacc[i] = (GM * R) ** 0.5 * (Mdotacc[i] - Mdotprop[i])
 
     # Luminosities - Dipole, Propeller and Total
     Ldip = dipeff * (-1.0 * Ndip * omega)
@@ -230,13 +246,13 @@ def main(args):
     t, Ltot, Lprop, Ldip = model_lc(pars)
 
     # Plot the model
-    plt.loglog(t, Ltot, c='k')
-    plt.loglog(t, Lprop, c='k', ls='--')
-    plt.loglog(t, Ldip, c='k', ls=':')
+    plt.loglog(t, Ltot, c="k")
+    plt.loglog(t, Lprop, c="k", ls="--")
+    plt.loglog(t, Ldip, c="k", ls=":")
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -248,43 +264,43 @@ if __name__ == '__main__':
         "-B",
         required=True,
         type=float,
-        choices=range(1.0-3, 10.001),
-        help="Magnetic field strength - 10^15 G"
+        choices=range(1.0 - 3, 10.001),
+        help="Magnetic field strength - 10^15 G",
     )
     parser.add_argument(
         "-P",
         required=True,
         type=float,
         choices=range(1.0e-3, 10.001),
-        help="Initial spin period - milliseconds"
+        help="Initial spin period - milliseconds",
     )
     parser.add_argument(
         "-M",
         required=True,
         type=float,
         choices=range(1.0e-5, 0.10001),
-        help="Initial disc mass - solar masses"
+        help="Initial disc mass - solar masses",
     )
     parser.add_argument(
         "-R",
         required=True,
         type=float,
         choices=range(50.0, 1500.1),
-        help="Disc radius - km"
+        help="Disc radius - km",
     )
     parser.add_argument(
         "-eps",
         required=True,
         type=float,
         choices=range(0.1, 100.1),
-        help="Fallback timescale ratio (epsilon)"
+        help="Fallback timescale ratio (epsilon)",
     )
     parser.add_argument(
         "-delt",
         required=True,
         type=float,
         choices=range(1.0e-3, 1000.001),
-        help="Mass ratio (delta)"
+        help="Mass ratio (delta)",
     )
 
     # TODO: Only work on this if you can think of a sensible way to combine

@@ -29,8 +29,12 @@ the chi square goodness-of-fit statstic.
         )
     elif len(pars) == 9:
         ymod = model_lc(
-            pars[:6], xdata=x, GRBtype=GRBtype, dipeff=pars[6],
-            propeff=pars[7], f_beam=pars[8]
+            pars[:6],
+            xdata=x,
+            GRBtype=GRBtype,
+            dipeff=pars[6],
+            propeff=pars[7],
+            f_beam=pars[8],
         )
 
     # Return the log-likelihood
@@ -75,8 +79,8 @@ A CSV file of custom limits can be passed via the custom_lims argument.
         cond_hi = np.all(pars <= seven_lims_hi)
 
     else:
-        cond_lo = np.all(pars >= lims["lower"].values[:len(pars)])
-        cond_hi = np.all(pars <= lims["upper"].values[:len(pars)])
+        cond_lo = np.all(pars >= lims["lower"].values[: len(pars)])
+        cond_hi = np.all(pars <= lims["upper"].values[: len(pars)])
 
     if (not cond_lo) or (not cond_hi):
         return -np.inf

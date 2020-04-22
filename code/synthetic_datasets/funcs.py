@@ -6,23 +6,23 @@ import numpy as np
 from scipy.integrate import odeint
 from scipy.interpolate import interp1d
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 # Global constants
-G = 6.674e-8           # Gravitational constant (cgs)
-c = 3.e10              # Speed of light (cm/s)
-R = 1.e6               # Magnetar radius (cm)
-Msol = 1.99e33         # Solar mass (cgs)
-M = 1.4 * Msol         # Magnetar mass
-I = 0.35 * M * R**2.0  # Moment of Inertia
+G = 6.674e-8  # Gravitational constant (cgs)
+c = 3.0e10  # Speed of light (cm/s)
+R = 1.0e6  # Magnetar radius (cm)
+Msol = 1.99e33  # Solar mass (cgs)
+M = 1.4 * Msol  # Magnetar mass
+I = 0.35 * M * R ** 2.0  # Moment of Inertia
 GM = G * M
 tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
 
-#==============================================================================#
+# ==============================================================================#
 
 # Suppress lsoda warnings
 def fileno(file_or_fd):
-    fd = getattr(file_or_fd, 'fileno', lambda: file_or_fd)()
+    fd = getattr(file_or_fd, "fileno", lambda: file_or_fd)()
     if not isinstance(fd, int):
         raise ValueError("Expected a file (`.fileno()`) or a file descriptor")
     return fd
@@ -33,12 +33,12 @@ def stdout_redirected(to=os.devnull, stdout=None):
     if stdout is None:
         stdout = sys.stdout
     stdout_fd = fileno(stdout)
-    with os.fdopen(os.dup(stdout_fd), 'wb') as copied:
+    with os.fdopen(os.dup(stdout_fd), "wb") as copied:
         stdout.flush()
         try:
             os.dup2(fileno(to), stdout_fd)
         except ValueError:
-            with open(to, 'wb') as to_file:
+            with open(to, "wb") as to_file:
                 os.dup2(to_file.fileno(), stdout_fd)
         try:
             yield stdout
@@ -46,7 +46,8 @@ def stdout_redirected(to=os.devnull, stdout=None):
             stdout.flush()
             os.dup2(copied.fileno(), stdout_fd)
 
-#==============================================================================#
+
+# ==============================================================================#
 # Calculate initial conditions to pass to odeint
 def init_conds(MdiscI, P_i):
     """
@@ -65,7 +66,7 @@ y0[1] = Initial angular frequency (s^-1)
     """
 
     # ODEint initial conditions
-    Mdisc0 = MdiscI * Msol                   # Disc mass
+    Mdisc0 = MdiscI * Msol  # Disc mass
     omega0 = (2.0 * np.pi) / (1.0e-3 * P_i)  # Angular frequency
 
     return Mdisc0, omega0
@@ -95,25 +96,32 @@ epsilon : ratio between fallback and viscous timescales (float)
     Mdisc, omega = y
 
     # Constants
-    Rdisc = RdiscI * 1.0e5                 # Disc radius
+    Rdisc = RdiscI * 1.0e5  # Disc radius
     tvisc = Rdisc / (alpha * cs7 * 1.0e7)  # Viscous timescale
-    mu = 1.0e15 * B * (R ** 3.0)           # Magnetic Dipole Moment
-    M0 = delta * MdiscI * Msol             # Global Mass Budget
-    tfb = epsilon * tvisc                  # Fallback timescale
+    mu = 1.0e15 * B * (R ** 3.0)  # Magnetic Dipole Moment
+    M0 = delta * MdiscI * Msol  # Global Mass Budget
+    tfb = epsilon * tvisc  # Fallback timescale
 
     # Radii - Alfven, Corotiona, Light Cylinder
-    Rm = ((mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((3.0 * Mdisc) / tvisc)
-          ** (-2.0  /7.0))
-    Rc = (GM / (omega ** 2.0))**(1.0 / 3.0)
+    Rm = (
+        (mu ** (4.0 / 7.0))
+        * (GM ** (-1.0 / 7.0))
+        * ((3.0 * Mdisc) / tvisc) ** (-2.0 / 7.0)
+    )
+    Rc = (GM / (omega ** 2.0)) ** (1.0 / 3.0)
     Rlc = c / omega
     if Rm >= (k * Rlc):
         Rm = k * Rlc
 
-    w = (Rm / Rc) ** (3.0 / 2.0)     # Fastness Parameter
+    w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness Parameter
     bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
-    modW = (0.6 * M * (c ** 2.0) * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM /
-            (R * (c ** 2.0))))))     # Binding energy
-    rot_param = bigT / modW          # Rotation parameter
+    modW = (
+        0.6
+        * M
+        * (c ** 2.0)
+        * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM / (R * (c ** 2.0)))))
+    )  # Binding energy
+    rot_param = bigT / modW  # Rotation parameter
 
     # Classical dipole torque
     Ndip = (-1.0 * (mu ** 2.0) * (omega ** 3.0)) / (6.0 * (c ** 3.0))
@@ -143,8 +151,17 @@ epsilon : ratio between fallback and viscous timescales (float)
 
 
 # Function that returns model light curve
-def model_lum(pars, xdata=None, n=10.0, alpha=0.1, cs7=1.0, k=0.9, dipeff=1.0,
-              propeff=1.0, f_beam=1.0):
+def model_lum(
+    pars,
+    xdata=None,
+    n=10.0,
+    alpha=0.1,
+    cs7=1.0,
+    k=0.9,
+    dipeff=1.0,
+    propeff=1.0,
+    f_beam=1.0,
+):
     """
 Function to return a light curve for the magnetar propeller model.
 
@@ -166,14 +183,19 @@ propeff : Propeller efficiency (float, optional)
 
     # Solve for Mdisc and omega
     with stdout_redirected():
-        soln, info = odeint(ODEs, y0, tarr, args=(B, MdiscI, RdiscI, epsilon,
-                            delta, n, alpha, cs7, k), full_output=True)
+        soln, info = odeint(
+            ODEs,
+            y0,
+            tarr,
+            args=(B, MdiscI, RdiscI, epsilon, delta, n, alpha, cs7, k),
+            full_output=True,
+        )
     # Catch parameters that break ODEINT
-    if info['message'] != 'Integration successful.':
-        return 'flag'
+    if info["message"] != "Integration successful.":
+        return "flag"
 
-    Mdisc = soln[:,0]
-    omega = soln[:,1]
+    Mdisc = soln[:, 0]
+    omega = soln[:, 1]
 
     # Constants
     Rdisc = RdiscI * 1.0e5
@@ -183,8 +205,11 @@ propeff : Propeller efficiency (float, optional)
     tfb = epsilon * tvisc
 
     # Radii - Alfven, Corotation, Light Cylinder
-    Rm = ((mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((3.0 * Mdisc) / tvisc)
-          ** (-2.0 / 7.0))
+    Rm = (
+        (mu ** (4.0 / 7.0))
+        * (GM ** (-1.0 / 7.0))
+        * ((3.0 * Mdisc) / tvisc) ** (-2.0 / 7.0)
+    )
     Rc = (GM / (omega ** 2.0)) ** (1.0 / 3.0)
     Rlc = c / omega
     inRm = Rm >= (k * Rlc)
@@ -192,8 +217,12 @@ propeff : Propeller efficiency (float, optional)
 
     w = (Rm / Rc) ** (3.0 / 2.0)
     bigT = 0.5 * I * (omega ** 2.0)
-    modW = (0.6 * M * (c ** 2.0) * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM /
-            (R * (c ** 2.0))))))
+    modW = (
+        0.6
+        * M
+        * (c ** 2.0)
+        * ((GM / (R * (c ** 2.0))) / (1.0 - 0.5 * (GM / (R * (c ** 2.0)))))
+    )
     rot_param = bigT / modW
 
     eta2 = 0.5 * (1.0 + np.tanh(n * (w - 1.0)))
@@ -219,8 +248,7 @@ propeff : Propeller efficiency (float, optional)
     Ldip = np.where(inLd2, Ldip, 0.0)
 
     # Propeller Luminosity
-    Lprop = (propeff * ((-1.0 * Nacc * omega) - ((GM / Rm) * eta2 * (Mdisc /
-             tvisc))))
+    Lprop = propeff * ((-1.0 * Nacc * omega) - ((GM / Rm) * eta2 * (Mdisc / tvisc)))
     inLp1 = Lprop <= 0.0
     inLd2 = np.isfinite(Lprop)
     Lprop = np.where(inLp1, 0.0, Lprop)

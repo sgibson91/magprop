@@ -7,9 +7,23 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 ROOT = os.path.split(HERE)[0]
 
 # Dictionary containing GRB names and web links to the data
-sgrbs = ["050724", "051016B", "051227", "060614", "061006", "061210", "070714B",
-         "071227", "080123", "080503", "100212A", "100522A", "111121A",
-         "150424A", "160410A"]
+sgrbs = [
+    "050724",
+    "051016B",
+    "051227",
+    "060614",
+    "061006",
+    "061210",
+    "070714B",
+    "071227",
+    "080123",
+    "080503",
+    "100212A",
+    "100522A",
+    "111121A",
+    "150424A",
+    "160410A",
+]
 
 # Change to data/SGRBS directory
 os.chdir(os.path.join(ROOT, "data", "SGRBS"))
@@ -29,9 +43,16 @@ for grb in sgrbs:
     data = np.loadtxt(infile, comments=["!", "NO", "READ"])
 
     # Create data frame
-    df = pd.DataFrame(data={"t": data[:, 0], "tpos": data[:, 1],
-                            "tneg": data[:, 2], "flux": data[:, 3],
-                            "fluxpos": data[:, 4], "fluxneg": data[:, 5]})
+    df = pd.DataFrame(
+        data={
+            "t": data[:, 0],
+            "tpos": data[:, 1],
+            "tneg": data[:, 2],
+            "flux": data[:, 3],
+            "fluxpos": data[:, 4],
+            "fluxneg": data[:, 5],
+        }
+    )
 
     # Write data frame to CSV file
     df.to_csv(outfile, index=False)

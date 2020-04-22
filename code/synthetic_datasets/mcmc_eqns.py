@@ -13,13 +13,13 @@ pars : a list of parameters to be parsed to model_lum
    y : y-axis data to be fitted to (aray of floats)
 yerr : error on y-data (array of floats)
     """
-    arr = np.array(pars)       # Copy pars into array
+    arr = np.array(pars)  # Copy pars into array
     arr[2:] = 10.0 ** arr[2:]  # Unlog required parameters
 
     # Calculate model
     mod = model_lum(arr, xdata=x)
 
-    if mod == 'flag':          # Flags models that break odeint
+    if mod == "flag":  # Flags models that break odeint
         return -1.0 * np.inf
     else:
         return -0.5 * np.sum(((y - mod) / yerr) ** 2.0)
@@ -70,9 +70,9 @@ fbad : filename for bad parameter sets to be written to (string)
     # Calculate likelihood
     ll = lnlike(pars, x, y, yerr)
     if (not np.isfinite(ll)) and (fbad is not None):
-        with open(fbad, 'a') as f:
+        with open(fbad, "a") as f:
             for i, k in enumerate(pars):
-                if i == (len(pars)-1):
+                if i == (len(pars) - 1):
                     f.write(f"{k}\n")
                 else:
                     f.write(f"{k}, ")
