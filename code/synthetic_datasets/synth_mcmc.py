@@ -13,6 +13,15 @@ from mcmc_eqns import lnprob
 from multiprocessing import Pool
 from matplotlib.ticker import MaxNLocator
 
+# Get filepaths
+HERE = os.path.dirname(os.path.realpath(__file__))
+tmp = HERE.split("/")
+
+while tmp[-1] != "magprop":
+    tmp.pop()
+
+ROOT = "/".join(tmp)
+
 truths = {
     "Humped": np.array([1.0, 5.0, -3.0, 2.0, -1.0, 0.0]),
     "Classic": np.array([1.0, 5.0, -3.0, 3.0, -1.0, 0.0]),
@@ -70,19 +79,19 @@ def parse_args():
 
 def create_filenames(GRB):
     # Data basename
-    data_basename = os.path.join("data", "synthetic_datasets")
+    data_basename = os.path.join(ROOT, "data", "synthetic_datasets")
     if not os.path.exists(data_basename):
         raise FileNotFoundError("Please make sure your chosen dataset exists.")
         sys.exit(1)
 
     # Directory name
-    data_dirname = os.path.join(data_basename, GRB)
+    data_dirname = os.path.join(ROOT, data_basename, GRB)
     if not os.path.exists(data_dirname):
         raise FileNotFoundError("Please make sure your chosen dataset exists.")
         sys.exit(1)
 
     # Plot basename
-    plot_basename = os.path.join("plots", "synthetic_datasets")
+    plot_basename = os.path.join(ROOT, "plots", "synthetic_datasets")
     if not os.path.exists(plot_basename):
         os.makedirs(plot_basename)
 
@@ -92,11 +101,11 @@ def create_filenames(GRB):
         os.mkdir(plot_dirname)
 
     # Construct filenames
-    fdata = os.path.join(data_dirname, "{}.csv".format(GRB))
-    fchain = os.path.join(data_dirname, "{}_chain.csv".format(GRB))
-    fbad = os.path.join(data_dirname, "{}_bad.csv".format(GRB))
-    finfo = os.path.join(data_dirname, "{}_info.json".format(GRB))
-    fplot = os.path.join(plot_dirname, "{GRB}_trace.png".format(GRB))
+    fdata = os.path.join(ROOT, data_dirname, "{}.csv".format(GRB))
+    fchain = os.path.join(ROOT, data_dirname, "{}_chain.csv".format(GRB))
+    fbad = os.path.join(ROOT, data_dirname, "{}_bad.csv".format(GRB))
+    finfo = os.path.join(ROOT, data_dirname, "{}_info.json".format(GRB))
+    fplot = os.path.join(ROOT, plot_dirname, "{GRB}_trace.png".format(GRB))
 
     # Initialise bad parameter file
     f = open(fbad, "w")

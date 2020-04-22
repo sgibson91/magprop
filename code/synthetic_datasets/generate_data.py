@@ -6,6 +6,15 @@ import numpy as np
 import pandas as pd
 from funcs import model_lum
 
+# Get filepaths
+HERE = os.path.dirname(os.path.realpath(__file__))
+tmp = HERE.split("/")
+
+while tmp[-1] != "magprop":
+    tmp.pop()
+
+ROOT = "/".join(tmp)
+
 GRBs = {
     "Humped": np.array([1.0, 5.0, 1.0e-3, 100.0, 0.1, 1.0]),
     "Classic": np.array([1.0, 5.0, 1.0e-3, 1000.0, 0.1, 1.0]),
@@ -30,15 +39,15 @@ def parse_args():
 
 
 def create_filenames(GRB):
-    basename = os.path.join("data", "synthetic_datasets")
+    basename = os.path.join(ROOT, "data", "synthetic_datasets")
     if not os.path.exists(basename):
         os.mkdir(basename)
 
-    dirname = os.path.join(basename, GRB)
+    dirname = os.path.join(ROOT, basename, GRB)
     if not os.path.exists(dirname):
         os.mkdir(dirname)
 
-    outfile = os.path.join(dirname, "{0}.csv".format(GRB))
+    outfile = os.path.join(ROOT, dirname, "{0}.csv".format(GRB))
 
     return outfile
 

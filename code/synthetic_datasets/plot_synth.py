@@ -10,6 +10,15 @@ import matplotlib.pyplot as plt
 from funcs import model_lum
 from fit_stats import aicc, redchisq
 
+# Get filepaths
+HERE = os.path.dirname(os.path.realpath(__file__))
+tmp = HERE.split("/")
+
+while tmp[-1] != "magprop":
+    tmp.pop()
+
+ROOT = "/".join(tmp)
+
 # Dictionary of true values for burst types
 truths = {
     "Humped": [1.0, 5.0, -3.0, 2.0, -1.0, 0.0],
@@ -43,30 +52,30 @@ def parse_args():
 
 def create_filenames(GRB):
     # Data basename and directory
-    data_basename = os.path.join("data", "synthetic_datasets")
-    data_dirname = os.path.join(data_basename, GRB)
+    data_basename = os.path.join(ROOT, "data", "synthetic_datasets")
+    data_dirname = os.path.join(ROOT, data_basename, GRB)
     if not os.path.exists(data_dirname):
         raise FileNotFoundError(
             "Please ensure your synthetic dataset and MCMC files have been generated."
         )
 
     # Plot basename as directory
-    plot_basename = os.path.join("plots", "synthetic_datasets")
+    plot_basename = os.path.join(ROOT, "plots", "synthetic_datasets")
     if not os.path.exists(plot_basename):
         os.mkdir(plot_basename)
 
-    plot_dirname = os.path.join(plot_basename, GRB)
+    plot_dirname = os.path.join(ROOT, plot_basename, GRB)
     if not os.path.exists(plot_dirname):
         os.mkdir(plot_dirname)
 
     # Construct filenames
-    fdata = os.path.join(data_dirname, "{}.csv".format(GRB))
-    fchain = os.path.join(data_dirname, "{}_chain.csv".format(GRB))
-    fstats = os.path.join(data_dirname, "{}_stats.json".format(GRB))
-    fres = os.path.join(data_dirname, "{}_model.csv".format(GRB))
-    finfo = os.path.join(data_dirname, "{}_info.json".format(GRB))
-    fplot_corner = os.path.join(plot_dirname, "{}_corner.png".format(GRB))
-    fplot_model = os.path.join(plot_dirname, "{}_model.png".format(GRB))
+    fdata = os.path.join(ROOT, data_dirname, "{}.csv".format(GRB))
+    fchain = os.path.join(ROOT, data_dirname, "{}_chain.csv".format(GRB))
+    fstats = os.path.join(ROOT, data_dirname, "{}_stats.json".format(GRB))
+    fres = os.path.join(ROOT, data_dirname, "{}_model.csv".format(GRB))
+    finfo = os.path.join(ROOT, data_dirname, "{}_info.json".format(GRB))
+    fplot_corner = os.path.join(ROOT, plot_dirname, "{}_corner.png".format(GRB))
+    fplot_model = os.path.join(ROOT, plot_dirname, "{}_model.png".format(GRB))
 
     return fdata, fchain, fstats, fres, finfo, fplot_corner, fplot_model
 
