@@ -166,6 +166,10 @@ eprint = {/oup/backfile/content_public/journal/mnras/470/4/10.1093_mnras_stx1531
 }
 ```
 
+### Software Citation
+
+To cite the software contained in this repo, please use the metadata contained in [`CITATION.cff`](./CITATION.cff).
+
 ### License
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
