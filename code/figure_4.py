@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from matplotlib.ticker import MaxNLocator
 
+# Get filepaths
+HERE = os.path.dirname(os.path.realpath(__file__))
+ROOT = os.path.split(HERE)[0]
 
 # Global constants
 G = 6.674e-8                      # Gravitational constant (cgs)
@@ -106,8 +109,8 @@ over time.
 
 
 # Check if plots folder exists
-if not (os.path.exists("plots")):
-    os.mkdir("plots")
+if not (os.path.exists(os.path.join(ROOT, "plots"))):
+    os.mkdir(os.path.join(ROOT, "plots"))
 
 fig, axes = plt.subplots(4, 3, sharex=True, figsize=(11, 11))
 
@@ -216,4 +219,4 @@ axes[2, 0].set_yticks([1.0e-6, 1.0e-4, 1.0e-2, 1.0e0, 1.0e2])
 
 fig.tight_layout(h_pad=0.0)
 
-fig.savefig("plots/figure_4.png")
+fig.savefig(os.path.join(ROOT, "plots/figure_4.png"))

@@ -2,13 +2,17 @@ import os
 import numpy as np
 import pandas as pd
 
+# Get filepaths
+HERE = os.path.dirname(os.path.realpath(__file__))
+ROOT = os.path.split(HERE)[0]
+
 # Dictionary containing GRB names and web links to the data
 sgrbs = ["050724", "051016B", "051227", "060614", "061006", "061210", "070714B",
          "071227", "080123", "080503", "100212A", "100522A", "111121A",
          "150424A", "160410A"]
 
 # Change to data/SGRBS directory
-os.chdir(os.path.join("data", "SGRBS"))
+os.chdir(os.path.join(ROOT, "data", "SGRBS"))
 
 # Loop over sgrbs list and make a directory for each grb
 for grb in sgrbs:

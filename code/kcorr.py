@@ -8,6 +8,9 @@ import pandas as pd
 from scipy.stats.mstats import gmean
 from astropy.cosmology import WMAP9 as cosmo
 
+# Get filepaths
+HERE = os.path.dirname(os.path.realpath(__file__))
+ROOT = os.path.split(HERE)[0]
 
 def k_correction(df, gamma, sigma, z, dl_cm):
     """
@@ -61,15 +64,15 @@ def main(args):
     """
     # Read in the CSV file of parameters
     if args.type == "S":
-        kcorr_df = pd.read_csv("data/kcorr_sgrbs.csv", index_col="GRB")
+        kcorr_df = pd.read_csv(os.path.join(ROOT, "data/kcorr_sgrbs.csv"), index_col="GRB")
     elif args.type == "L":
-        kcorr_df = pd.read_csv("data/kcorr_lgrbs.csv", index_col="GRB")
+        kcorr_df = pd.read_csv(os.path.join(ROOT, "data/kcorr_lgrbs.csv"), index_col="GRB")
     else:
         print("Please provide a valid type argument.\n" \
               "The type of GRB: L - long, S - short")
         sys.exit(2)
 
-    print(f"--> Loading the {args.type}GRB properties...")
+    print("--> Loading the %sGRB properties..." % args.type)
     grbs = kcorr_df.index.tolist()    # Get list of GRB names
 
     # Calculate the luminosity distance in cm and add to data frame
@@ -81,12 +84,12 @@ def main(args):
 
         # Create filepaths
         if args.type == "S":
-            infile = os.path.join("data", "SGRBS", grb, "".join([grb, ".csv"]))
-            outfile = os.path.join("data", "SGRBS", grb, "".join([grb,
+            infile = os.path.join(ROOT, "data", "SGRBS", grb, "".join([grb, ".csv"]))
+            outfile = os.path.join(ROOT, "data", "SGRBS", grb, "".join([grb,
                                    "_k.csv"]))
         elif args.type == "L":
-            infile = os.path.join("data", "LGRBS", grb, "".join([grb, ".csv"]))
-            outfile = os.path.join("data", "LGRBS", grb, "".join([grb,
+            infile = os.path.join(ROOT, "data", "LGRBS", grb, "".join([grb, ".csv"]))
+            outfile = os.path.join(ROOT, "data", "LGRBS", grb, "".join([grb,
                                                                   "_k.csv"]))
         else:
             print("Please provide a valid type argument.\n" \
@@ -94,7 +97,7 @@ def main(args):
             sys.exit(2)
 
         # Read in GRB data file
-        print(f"--> Loading data for: {grb}...")
+        print("--> Loading data for: %s..." % grb)
         data = pd.read_csv(infile, index_col=False)
 
         # Perform k-correction

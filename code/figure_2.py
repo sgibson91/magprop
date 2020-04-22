@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 
+# Get filepaths
+HERE = os.path.dirname(os.path.realpath(__file__))
+ROOT = os.path.split(HERE)[0]
 
 # Global constants
 G = 6.674e-8                      # Gravitational constant (cgs)
@@ -104,8 +107,8 @@ over time.
 
 
 # Check if plots folder exists
-if not (os.path.exists("plots")):
-    os.mkdir("plots")
+if not (os.path.exists(os.path.join(ROOT, "plots"))):
+    os.mkdir(os.path.join(ROOT, "plots"))
 
 # Variable set-up
 B = 1.0         # Magnetic field strength - 10^15 G
@@ -165,4 +168,4 @@ ax2.set_ylabel('$\omega$ (${\\rm s}^{-1}$)', fontsize=10)
 ax3.set_ylabel('$r_{\\rm m}/r_{\\rm c}$', fontsize=10)
 
 fig.tight_layout(h_pad=0.2)
-fig.savefig("plots/figure_2.png")
+fig.savefig(os.path.join(ROOT, "plots/figure_2.png"))
