@@ -1,7 +1,7 @@
 dist: xenial
 language: python
 python:
-  - "3.7"
+  - "2.7"
 install:
   - pip install -r requirements.txt  # install dependencies
   - python setup.py install       # install magnetar library
