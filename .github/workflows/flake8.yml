@@ -24,4 +24,4 @@ jobs:
           pip install flake8
       - name: Lint with Flake8
         run: |
-          flake8 --builtins=ArgumentError ./
+          flake8 --ignore=E501,E722,F403,F405,F407,F821,W503,W605 --exclude=./magnetar/__init__.py ./
