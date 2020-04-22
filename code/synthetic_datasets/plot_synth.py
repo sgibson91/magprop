@@ -7,10 +7,8 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib import rc
 from funcs import model_lum
 from fit_stats import aicc, redchisq
-from matplotlib.ticker import MaxNLocator
 
 # Dictionary of true values for burst types
 truths = {
@@ -62,13 +60,13 @@ def create_filenames(GRB):
         os.mkdir(plot_dirname)
 
     # Construct filenames
-    fdata = os.path.join(data_dirname, f"{GRB}.csv")
-    fchain = os.path.join(data_dirname, f"{GRB}_chain.csv")
-    fstats = os.path.join(data_dirname, f"{GRB}_stats.json")
-    fres = os.path.join(data_dirname, f"{GRB}_model.csv")
-    finfo = os.path.join(data_dirname, f"{GRB}_info.json")
-    fplot_corner = os.path.join(plot_dirname, f"{GRB}_corner.png")
-    fplot_model = os.path.join(plot_dirname, f"{GRB}_model.png")
+    fdata = os.path.join(data_dirname, "{}.csv".format(GRB))
+    fchain = os.path.join(data_dirname, "{}_chain.csv".format(GRB))
+    fstats = os.path.join(data_dirname, "{}_stats.json".format(GRB))
+    fres = os.path.join(data_dirname, "{}_model.csv".format(GRB))
+    finfo = os.path.join(data_dirname, "{}_info.json".format(GRB))
+    fplot_corner = os.path.join(plot_dirname, "{}_corner.png".format(GRB))
+    fplot_model = os.path.join(plot_dirname, "{}_model.png".format(GRB))
 
     return fdata, fchain, fstats, fres, finfo, fplot_corner, fplot_model
 
@@ -115,7 +113,8 @@ def create_model_plot(model, data, GRB, fplot):
     ax.tick_params(axis="both", which="major", labelsize=10)
     ax.set_xlabel(r"Time (s)", fontsize=12)
     ax.set_ylabel(
-        r"Luminosity $\left(10^{50} {\rm erg} {\rm s}^{-1}\right)$", fontsize=12
+        r"Luminosity $\left(10^{50} {\rm erg} {\rm s}^{-1}\right)$",
+        fontsize=12,
     )
     ax.set_title(r"{0}".format(GRB), fontsize=12)
 
@@ -139,7 +138,6 @@ def main():
 
     Npars = mc_pars["Npars"]
     Nwalk = mc_pars["Nwalk"]
-    Nstep = mc_pars["Nstep"]
 
     # Read in data
     data = pd.read_csv(fdata)
@@ -147,7 +145,7 @@ def main():
     # Read in chain & probability and reshape
     cols = tuple(range(Npars))
     skip = (args.n_burn * Nwalk) + 1
-    samples = np.loadtxt(fchain, delimiter=",", skiprows=1, usecols=cols)
+    samples = np.loadtxt(fchain, delimiter=",", skiprows=skip, usecols=cols)
 
     stats = {"Nburn": args.n_burn}
 
@@ -196,45 +194,45 @@ def main():
     stats["stats"] = {"chi_square_red": chisq_r}
 
     stats["latex"] = (
-        f"\n\n{args.grb}"
+        "\n\n{}".format(args.grb)
         + " & $"
-        + f"{B[0]}"
+        + "{:.2f}".format(B[0])
         + "^{+"
-        + f"{B[1]}"
+        + "{:.2f}".format(B[1])
         + "}_{-"
-        + f"{B[2]}"
+        + "{:.2f}".format(B[2])
         + "}$ & $"
-        + f"{P[0]}"
+        + "{:.2f}".format(P[0])
         + "^{+"
-        + f"{P[1]}"
+        + "{:.2f}".format(P[1])
         + "}_{-"
-        + f"{P[2]}"
+        + "{:.2f}".format(P[2])
         + "}$ & $"
-        + f"{Md[0]}"
+        + "{:.2f}".format(Md[0])
         + "^{+"
-        + f"{Md[1]}"
+        + "{:.2f}".format(Md[1])
         + "}_{-"
-        + f"{Md[2]}"
+        + "{:.2f}".format(Md[2])
         + "}$ & $"
-        + f"{Rd[0]}"
+        + "{:.2f}".format(Rd[0])
         + "^{+"
-        + f"{Rd[1]}"
+        + "{:.2f}".format(Rd[1])
         + "}_{-"
-        + f"{Rd[2]}"
+        + "{:.2f}".format(Rd[2])
         + "}$ & $"
-        + f"{eps[0]}"
+        + "{:.2f}".format(eps[0])
         + "^{+"
-        + f"{eps[1]}"
+        + "{:.2f}".format(eps[1])
         + "}_{-"
-        + f"{eps[2]}"
+        + "{:.2f}".format(eps[2])
         + "}$ & $"
-        + f"{delt[0]}"
+        + "{:.2f}".format(delt[0])
         + "^{+"
-        + f"{delt[1]}"
+        + "{:.2f}".format(delt[1])
         + "}_{-"
-        + f"{delt[2]}"
+        + "{:.2f}".format(delt[2])
         + "}$ & $"
-        + f"{chisq_r}"
+        + "{:.2f}".format(chisq_r)
         + "$ \\\\ [2pt]"
     )
 
@@ -244,7 +242,7 @@ def main():
     # Write to a file
     with open(fstats, "w") as f:
         json.dump(stats, f)
-    print(f"Results written to: {fstats}")
+    print("Results written to: {}".format(fstats))
 
     # Plot the smoothed model
     create_model_plot(fit, data, args.grb, fplot_model)

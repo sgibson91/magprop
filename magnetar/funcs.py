@@ -9,7 +9,7 @@ c = 3.0e10  # Light speed - cm/s
 R = 1.0e6  # Magnetar radius - cm
 Msol = 1.99e33  # Solar mass - grams
 M = 1.4 * Msol  # Magnetar mass - grams
-I = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of inertia
+inertia = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of inertia
 GM = G * M
 
 
@@ -69,7 +69,7 @@ over time.
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness Parameter
 
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M
@@ -98,7 +98,7 @@ over time.
         else:
             Nacc = ((GM * R) ** 0.5) * (Mdotacc - Mdotprop)
 
-    omegadot = (Nacc + Ndip) / I  # Angular frequency time derivative
+    omegadot = (Nacc + Ndip) / inertia  # Angular frequency time derivative
 
     return np.array([Mdotdisc, omegadot])
 
@@ -173,9 +173,7 @@ parameters.
     # Convert constants
     Rdisc = RdiscI * 1.0e5  # Disc radius - cm
     tvisc = Rdisc / (alpha * cs7 * 1.0e7)  # Viscous timescale - secs
-    mu = 1.0e15 * B * (R ** 3.0)  # Magnetic dipole moment
-    M0 = delta * MdiscI * Msol  # Fallback mass budget - grams
-    tfb = epsilon * tvisc  # Fallback timescale - secs
+    mu = 1.0e15 * B * (R ** 3.0)  # Magnetic dipole moment  # Fallback timescale - secs
 
     # Radii - Alfven, Corotation, Light Cylinder
     Rm = (mu ** (4.0 / 7.0)) * (GM ** (-1.0 / 7.0)) * ((Mdisc / tvisc) ** (-2.0 / 7.0))
@@ -185,7 +183,7 @@ parameters.
     Rm = np.where(Rm >= (k * Rlc), (k * Rlc), Rm)
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness parameter
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M

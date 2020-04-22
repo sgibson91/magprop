@@ -14,7 +14,7 @@ c = 3.0e10  # Speed of light (cm/s)
 R = 1.0e6  # Magnetar radius (cm)
 Msol = 1.99e33  # Solar mass (cgs)
 M = 1.4 * Msol  # Magnetar mass
-I = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of Inertia
+inertia = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of Inertia
 alpha = 0.1  # Sound speed prescription
 cs7 = 1.0  # Sound speed in disc - 10^7 cm/s
 GM = G * M
@@ -81,7 +81,7 @@ over time.
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness Parameter
 
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M
@@ -110,7 +110,7 @@ over time.
         else:
             Nacc = ((GM * R) ** 0.5) * (Mdotacc - Mdotprop)
 
-    omegadot = (Nacc + Ndip) / I  # Angular frequency time derivative
+    omegadot = (Nacc + Ndip) / inertia  # Angular frequency time derivative
 
     return np.array([Mdotdisc, omegadot])
 
@@ -158,7 +158,7 @@ for z, grb in enumerate(grbs):
     Rm = np.where(Rm >= (0.9 * Rlc), 0.9 * Rlc, Rm)
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness parameter
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M

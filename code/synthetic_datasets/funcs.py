@@ -14,11 +14,12 @@ c = 3.0e10  # Speed of light (cm/s)
 R = 1.0e6  # Magnetar radius (cm)
 Msol = 1.99e33  # Solar mass (cgs)
 M = 1.4 * Msol  # Magnetar mass
-I = 0.35 * M * R ** 2.0  # Moment of Inertia
+inertia = 0.35 * M * R ** 2.0  # Moment of Inertia
 GM = G * M
 tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
 
 # ==============================================================================#
+
 
 # Suppress lsoda warnings
 def fileno(file_or_fd):
@@ -114,7 +115,7 @@ epsilon : ratio between fallback and viscous timescales (float)
         Rm = k * Rlc
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness Parameter
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M
@@ -145,7 +146,7 @@ epsilon : ratio between fallback and viscous timescales (float)
         else:
             Nacc = ((GM * R) ** 0.5) * (Mdotacc - Mdotprop)
 
-    omegadot = (Nacc + Ndip) / I  # Angular frequency time derivative
+    omegadot = (Nacc + Ndip) / inertia  # Angular frequency time derivative
 
     return Mdotdisc, omegadot
 
@@ -201,8 +202,6 @@ propeff : Propeller efficiency (float, optional)
     Rdisc = RdiscI * 1.0e5
     tvisc = Rdisc / (alpha * cs7 * 1.0e7)
     mu = 1.0e15 * B * (R ** 3.0)
-    M0 = delta * MdiscI * Msol
-    tfb = epsilon * tvisc
 
     # Radii - Alfven, Corotation, Light Cylinder
     Rm = (
@@ -216,7 +215,7 @@ propeff : Propeller efficiency (float, optional)
     Rm = np.where(inRm, (k * Rlc), Rm)
 
     w = (Rm / Rc) ** (3.0 / 2.0)
-    bigT = 0.5 * I * (omega ** 2.0)
+    bigT = 0.5 * inertia * (omega ** 2.0)
     modW = (
         0.6
         * M

@@ -92,11 +92,11 @@ def create_filenames(GRB):
         os.mkdir(plot_dirname)
 
     # Construct filenames
-    fdata = os.path.join(data_dirname, f"{GRB}.csv")
-    fchain = os.path.join(data_dirname, f"{GRB}_chain.csv")
-    fbad = os.path.join(data_dirname, f"{GRB}_bad.csv")
-    finfo = os.path.join(data_dirname, f"{GRB}_info.json")
-    fplot = os.path.join(plot_dirname, f"{GRB}_trace.png")
+    fdata = os.path.join(data_dirname, "{}.csv".format(GRB))
+    fchain = os.path.join(data_dirname, "{}_chain.csv".format(GRB))
+    fbad = os.path.join(data_dirname, "{}_bad.csv".format(GRB))
+    finfo = os.path.join(data_dirname, "{}_info.json".format(GRB))
+    fplot = os.path.join(plot_dirname, "{GRB}_trace.png".format(GRB))
 
     # Initialise bad parameter file
     f = open(fbad, "w")
@@ -185,38 +185,38 @@ def main():
 
     # Write full MCMC to file
     with open(fchain, "w") as f:
-        f.write(f"{Npars}, {Nwalk}, {Nstep}\n")
+        f.write("{0}, {1}, {2}\n".format(Npars, Nwalk, Nstep))
         for j in range(Nstep):
             for i in range(Nwalk):
                 for k in range(Npars):
-                    f.write(f"{sampler.chain[i, j, k]:.6f}, ")
-                f.write(f"{sampler.lnprobability[i, j]:.6f}\n")
+                    f.write("{:.6f}, ".format(sampler.chain[i, j, k]))
+                f.write("{:.6f}\n".format(sampler.lnprobability[i, j]))
 
     # Write each individual parameter to it's own file
     for k in range(Npars):
-        with open(f"{fn}_{k}.csv", "w") as f:
+        with open("{0}_{1}.csv".format(fn, k), "w") as f:
             for j in range(Nstep):
                 for i in range(Nwalk):
                     if i == (Nwalk - 1):
-                        f.write(f"{sampler.chain[i, j, k]:.6f}\n")
+                        f.write("{:.6f}\n".format(sampler.chain[i, j, k]))
                     else:
-                        f.write(f"{sampler.chain[i,j,k]:.6f}, ")
+                        f.write("{:.6f}, ".format(sampler.chain[i, j, k]))
 
     # Write probability to it's own file
-    with open(f"{fn}_lnp.csv", "w") as f:
+    with open("{}_lnp.csv".format(fn), "w") as f:
         for j in range(Nstep):
             for i in range(Nwalk):
                 if i == (Nwalk - 1):
-                    f.write(f"{sampler.lnprobability[i, j]:.6f}\n")
+                    f.write("{:.6f}\n".format(sampler.lnprobability[i, j]))
                 else:
-                    f.write(f"{sampler.lnprobability[i,j]:.6f}, ")
+                    f.write("{:.6f}, ".format(sampler.lnprobability[i, j]))
 
     # Acceptance fraction and autocorrelation time
     tau = sampler.get_autocorr_time()
     print(
-        f"{args.grb}\n"
-        + f"Mean acceptance fraction: {np.mean(sampler.acceptance_fraction)}\n"
-        + f"Average auto-correlation time: {np.mean(tau):.3f}"
+        "{}\n".format(args.grb)
+        + "Mean acceptance fraction: {:.3f}\n".format(np.mean(sampler.acceptance_fraction))
+        + "Average auto-correlation time: {:.3f}".format(np.mean(tau))
     )
 
     info["acceptance_fraction"] = np.mean(sampler.acceptance_fraction)

@@ -13,7 +13,7 @@ c = 3.0e10  # Speed of light (cm/s)
 R = 1.0e6  # Magnetar radius (cm)
 Msol = 1.99e33  # Solar mass (cgs)
 M = 1.4 * Msol  # Magnetar mass
-I = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of Inertia
+inertia = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of Inertia
 GM = G * M
 tarr = np.logspace(0.0, 6.0, num=10001, base=10.0)
 
@@ -78,7 +78,7 @@ over time.
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness Parameter
 
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M
@@ -107,7 +107,7 @@ over time.
         else:
             Nacc = ((GM * R) ** 0.5) * (Mdotacc - Mdotprop)
 
-    omegadot = (Nacc + Ndip) / I  # Angular frequency time derivative
+    omegadot = (Nacc + Ndip) / inertia  # Angular frequency time derivative
 
     return np.array([Mdotdisc, omegadot])
 

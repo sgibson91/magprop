@@ -14,7 +14,7 @@ c = 3.0e10  # Speed on light in cm/s
 R = 1.0e6  # Radius of Magnetar (10km)
 Msol = 1.99e33  # Solar mass in grams
 M = 1.4 * Msol  # Mass of Magnetar in grams
-I = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of Inertia
+inertia = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of Inertia
 n = 10.0  # Propeller "switch-on"
 alpha = 0.1  # Sound speed prescription
 cs7 = 1.0  # Sound speed in disc - 10^7 cm/s
@@ -75,7 +75,7 @@ Function to be integrated by ODEINT following the model in Piro & Ott (2011).
         Rm = k * Rlc
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness parameter
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M
@@ -106,7 +106,7 @@ Function to be integrated by ODEINT following the model in Piro & Ott (2011).
         else:
             Nacc = ((GM * R) ** 0.5) * (Mdotacc - Mdotprop)
 
-    omegadot = (Nacc + Ndip) / I
+    omegadot = (Nacc + Ndip) / inertia
 
     return np.array([Mdotdisc, omegadot])
 
@@ -146,7 +146,7 @@ Function to be integrated by ODEINT following model in Bucciantini et al. (2006)
         Rm = k * Rlc
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness parameter
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M
@@ -179,7 +179,7 @@ Function to be integrated by ODEINT following model in Bucciantini et al. (2006)
         else:
             Nacc = ((GM * R) ** 0.5) * (Mdotacc - Mdotprop)
 
-    omegadot = (Nacc + Ndip) / I
+    omegadot = (Nacc + Ndip) / inertia
 
     return np.array([Mdotdisc, omegadot])
 
@@ -239,7 +239,7 @@ po_Rlc = c / po_omega
 po_Rm = np.where((po_Rm >= k * po_Rlc), (k * po_Rlc), po_Rm)
 
 po_w = (po_Rm / po_Rc) ** (3.0 / 2.0)
-po_bigT = 0.5 * I * (po_omega ** 2.0)
+po_bigT = 0.5 * inertia * (po_omega ** 2.0)
 po_beta = po_bigT / modW
 
 po_Ndip = (-1.0 * (mu ** 2.0) * (po_omega ** 3.0)) / (6.0 * (c ** 3.0))
@@ -281,7 +281,7 @@ b_Rlc = c / b_omega
 b_Rm = np.where(b_Rm >= (k * b_Rlc), (k * b_Rlc), b_Rm)
 
 b_w = (b_Rm / b_Rc) ** (3.0 / 2.0)
-b_bigT = 0.5 * I * (b_omega ** 2.0)
+b_bigT = 0.5 * inertia * (b_omega ** 2.0)
 b_beta = b_bigT / modW
 
 b_Ndip = (

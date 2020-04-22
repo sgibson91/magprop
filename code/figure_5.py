@@ -15,7 +15,7 @@ Rkm = 10.0  # Magnetar radius - km
 omass = 1.4  # Magnetar mass - Msol
 Msol = 1.99e33  # Solar mass - grams
 M = omass * Msol  # Magnetar mass - grams
-I = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of inertia
+inertia = (4.0 / 5.0) * M * (R ** 2.0)  # Moment of inertia
 alpha = 0.1  # Sound speed prescription
 cs7 = 1.0  # Sound speed in disc - 10^7 cm/s
 k = 0.9  # Capping fraction
@@ -86,7 +86,7 @@ over time.
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness Parameter
 
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M
@@ -115,7 +115,7 @@ over time.
         else:
             Nacc = ((GM * R) ** 0.5) * (Mdotacc - Mdotprop)
 
-    omegadot = (Nacc + Ndip) / I  # Angular frequency time derivative
+    omegadot = (Nacc + Ndip) / inertia  # Angular frequency time derivative
 
     return np.array([Mdotdisc, omegadot])
 
@@ -173,7 +173,7 @@ Function to calculate the model light curve for a given set of parameters.
     Rm = np.where(Rm >= (k * Rlc), (k * Rlc), Rm)
 
     w = (Rm / Rc) ** (3.0 / 2.0)  # Fastness parameter
-    bigT = 0.5 * I * (omega ** 2.0)  # Rotational energy
+    bigT = 0.5 * inertia * (omega ** 2.0)  # Rotational energy
     modW = (
         0.6
         * M

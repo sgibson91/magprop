@@ -5,10 +5,10 @@ import numpy as np
 
 def redchisq(ydata, ymod, deg=None, sd=None):
     """
-Returns the reduced chi-square error statistic for an arbitrary model, chisq/nu,
-where nu is the number of degrees of freedom. If individual standard deviations
-(array sd) are supplied, then the chi-square error statistic is computed as the
-sum of squared errors divided by the standard deviations.
+Returns the reduced chi-square error statistic for an arbitrary model,
+chisq/nu, where nu is the number of degrees of freedom. If individual standard
+deviations (array sd) are supplied, then the chi-square error statistic is
+computed as the sum of squared errors divided by the standard deviations.
 
     :param ydata: array containing data (float)
     :param ymod: array containing model (float)
