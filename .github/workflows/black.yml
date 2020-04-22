@@ -24,4 +24,4 @@ jobs:
           pip install black
       - name: Lint with black
         run: |
-          black --check magnetar/
+          black --check ./
