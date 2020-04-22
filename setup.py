@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-from HelmUpgradeBot import __version__
+from magnetar import __version__
 
 # Source dependencies from requirements.txt file.
 try:
@@ -15,7 +15,7 @@ setup(
     version=__version__,
     install_requires=install_packages,
     include_package_data=True,
-    python_requires="2.7",
+    python_requires="==2.7",
     author="Sarah Gibson",
     author_email="drsarahlgibson@gmail.com",
     url="https://sgibson91.github.io",
