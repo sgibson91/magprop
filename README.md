@@ -29,6 +29,14 @@ git clone https://github.com/sgibson91/magprop.git
 cd magprop
 ```
 
+Create a Python 2.7 environment.
+The below example uses [conda](https://docs.conda.io/en/latest/miniconda.html).
+
+```bash
+conda create -n magprop python=2.7 -y
+conda activate magprop
+```
+
 Install the requirements using `pip`.
 
 ```bash
