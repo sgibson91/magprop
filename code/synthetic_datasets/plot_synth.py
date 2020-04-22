@@ -122,8 +122,7 @@ def create_model_plot(model, data, GRB, fplot):
     ax.tick_params(axis="both", which="major", labelsize=10)
     ax.set_xlabel(r"Time (s)", fontsize=12)
     ax.set_ylabel(
-        r"Luminosity $\left(10^{50} {\rm erg} {\rm s}^{-1}\right)$",
-        fontsize=12,
+        r"Luminosity $\left(10^{50} {\rm erg} {\rm s}^{-1}\right)$", fontsize=12
     )
     ax.set_title(r"{0}".format(GRB), fontsize=12)
 

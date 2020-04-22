@@ -223,7 +223,9 @@ def main():
     tau = sampler.get_autocorr_time()
     print(
         "{}\n".format(args.grb)
-        + "Mean acceptance fraction: {:.3f}\n".format(np.mean(sampler.acceptance_fraction))
+        + "Mean acceptance fraction: {:.3f}\n".format(
+            np.mean(sampler.acceptance_fraction)
+        )
         + "Average auto-correlation time: {:.3f}".format(np.mean(tau))
     )
 
